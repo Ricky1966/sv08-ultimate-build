@@ -1,5 +1,20 @@
 # SV08 Ultimate Build
 
+
+
+> [!WARNING]
+> ## Disclaimer
+>
+> Questo è un progetto **community e non ufficiale**. Non è affiliato, sponsorizzato o approvato da Sovol o dagli altri progetti e produttori citati.
+>
+> Le procedure, configurazioni e modifiche documentate in questo repository derivano da una migrazione realmente eseguita e testata su una specifica Sovol SV08, ma **non costituiscono una garanzia di compatibilità o corretto funzionamento su ogni macchina**.
+>
+> Klipper, Katapult, Eddy, DKEU e gli altri componenti software evolvono nel tempo: quanto documentato qui rappresenta uno stato verificato del progetto, non necessariamente lo stato dell'arte corrente.
+>
+> Flash del firmware, modifiche alla configurazione, cablaggi, calibrazioni e movimenti della macchina possono causare perdita della configurazione originale, malfunzionamenti o danni se eseguiti in modo errato.
+>
+> **Chi utilizza questo repository lo fa sotto la propria responsabilità.** Prima di qualsiasi modifica, conserva backup verificati e assicurati di comprendere le operazioni che stai eseguendo.
+>
 **Lingue:** **Italiano** | [English](README.en.md)
 
 Documentazione community per migrare una **Sovol SV08** dallo stack software di fabbrica a **Klipper Mainline corrente**, includendo:
