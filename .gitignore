@@ -1,0 +1,50 @@
+# Secrets and credentials
+*.key
+*.pem
+*.crt
+*.p12
+*.pfx
+*.env
+.env
+.env.*
+
+# SSH and network configuration
+.ssh/
+authorized_keys
+known_hosts
+wpa_supplicant.conf
+NetworkManager/
+interfaces
+
+# Moonraker and system data
+moonraker.db
+*.db
+*.sqlite
+*.sqlite3
+logs/
+*.log
+
+# Full system images and archives
+*.img
+*.iso
+*.zip
+*.7z
+*.tar
+*.tar.gz
+*.tgz
+
+# Temporary and editor files
+*~
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Generated backups
+backup-emmc/
+system-backup/
+
+# Local-only backups
+local-backups/

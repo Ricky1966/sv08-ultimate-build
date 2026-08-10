@@ -1,0 +1,20 @@
+{
+    "bottom_shell_layers": "5",
+    "enable_support": "1",
+    "from": "User",
+    "inherits": "0.20mm Standard @Sovol SV08 0.4 nozzle",
+    "initial_layer_print_height": "0.2",
+    "name": "Phoenix 0.20 Strong 30% Gyroid + Support",
+    "print_extruder_id": [
+        "1"
+    ],
+    "print_extruder_variant": [
+        "Direct Drive Standard"
+    ],
+    "print_settings_id": "Phoenix 0.20 Strong 30% Gyroid + Support",
+    "sparse_infill_density": "30%",
+    "sparse_infill_pattern": "gyroid",
+    "top_shell_layers": "5",
+    "version": "2.4.0.1",
+    "wall_loops": "4"
+}

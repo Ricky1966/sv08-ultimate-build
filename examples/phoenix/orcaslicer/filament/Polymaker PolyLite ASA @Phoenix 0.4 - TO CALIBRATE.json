@@ -1,0 +1,10 @@
+{
+    "version": "2.4.0.1",
+    "compatible_printers": [
+        "Phoenix 0.4 nozzle"
+    ],
+    "filament_settings_id": "Polymaker PolyLite ASA @Phoenix 0.4 - TO CALIBRATE",
+    "from": "User",
+    "inherits": "PolyLite ASA @System",
+    "name": "Polymaker PolyLite ASA @Phoenix 0.4 - TO CALIBRATE"
+}
