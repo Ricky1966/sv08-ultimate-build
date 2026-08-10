@@ -1,318 +1,263 @@
 # SV08 Ultimate Build
 
-Community documentation for migrating a **Sovol SV08** from the factory software stack to **current Klipper Mainline**, including:
+**Lingue:** **Italiano** | [English](README.en.md)
 
-- CB1/Linux setup;
-- MCU backup, flashing and recovery;
-- Mainline printer configuration;
-- native Klipper Eddy support;
+Documentazione community per migrare una **Sovol SV08** dallo stack software di fabbrica a **Klipper Mainline corrente**, includendo:
+
+- configurazione CB1/Linux;
+- backup, flashing e recovery delle MCU;
+- configurazione della stampante su Mainline;
+- supporto Eddy nativo di Klipper;
 - Demon Klipper Essentials Unified / DKEU3;
-- calibration;
+- calibrazione;
 - troubleshooting;
 - rollback.
 
-The guides are based on a real end-to-end migration of a Sovol SV08 nicknamed **Phoenix**, but the repository is structured so that Phoenix-specific values and history are kept separate from the reusable community baseline.
+Le guide derivano da una migrazione reale end-to-end di una Sovol SV08 soprannominata **Phoenix**, ma il repository è strutturato in modo da tenere separati i valori e la cronologia specifici della Phoenix dalla baseline community riutilizzabile.
 
-## Start here
+## Da dove iniziare
 
-If you are migrating a Sovol SV08, follow the guides in this order:
+Se stai migrando una Sovol SV08, segui le guide in questo ordine:
 
 1. [Getting started](docs/getting-started.md)
-2. [Backup and rollback](docs/backup-and-rollback.md)
-3. [CB1 and Klipper Mainline installation](docs/install-cb1-mainline.md)
-4. [MCU flashing and recovery](docs/flash-mcus.md)
-5. [Base Mainline configuration](docs/base-configuration.md)
-6. [Native Eddy](docs/native-eddy.md)
-7. [Demon / DKEU3 integration](docs/demon-integration.md)
-8. [Validation and calibration](docs/validation-and-calibration.md)
+2. [Backup e rollback](docs/backup-and-rollback.md)
+3. [Installazione CB1 e Klipper Mainline](docs/install-cb1-mainline.md)
+4. [Flashing e recovery delle MCU](docs/flash-mcus.md)
+5. [Configurazione base Mainline](docs/base-configuration.md)
+6. [Eddy nativo](docs/native-eddy.md)
+7. [Integrazione Demon / DKEU3](docs/demon-integration.md)
+8. [Validazione e calibrazione](docs/validation-and-calibration.md)
 9. [Troubleshooting](docs/troubleshooting.md)
 
-A compatibility index for older links is also available:
+È disponibile anche un indice di compatibilità per i vecchi link:
 
-[Klipper Mainline migration](docs/mainline-migration.md)
+[Migrazione Klipper Mainline](docs/mainline-migration.md)
 
-## Read this before flashing anything
+## Leggi prima di flashare qualsiasi cosa
 
-Do **not** start by erasing or flashing the MCU boards.
+**Non** iniziare cancellando o flashando le MCU.
 
-Before changing firmware, complete at least:
+Prima di modificare il firmware, completa almeno:
 
-- an inventory of the stock system;
-- backup of `printer.cfg` and all included configuration;
-- backup of Moonraker and custom macros;
-- a system/eMMC rollback plan;
-- personal dumps of the original MCU firmware when possible;
-- verification that the recovery procedure is understood.
+- inventario del sistema stock;
+- backup di `printer.cfg` e di tutti i file inclusi;
+- backup di Moonraker e delle macro personalizzate;
+- piano di rollback del sistema/eMMC;
+- dump personali del firmware MCU originale quando possibile;
+- verifica di aver compreso la procedura di recovery.
 
-See:
+Vedi:
 
-[Backup and rollback](docs/backup-and-rollback.md)
+[Backup e rollback](docs/backup-and-rollback.md)
 
-## What this repository covers
+## Cosa copre questo repository
 
-The community path currently documents:
+Il percorso community documenta attualmente:
 
-- migration away from the factory Sovol Klipper environment;
-- CB1-based Linux environment used by the stock Sovol controller;
+- migrazione dall'ambiente Klipper factory Sovol;
+- ambiente Linux basato su CB1 usato dal controller Sovol stock;
 - Klipper Mainline;
-- mainboard and toolboard firmware migration;
-- Katapult-based recovery/update path;
-- stable MCU identification using `/dev/serial/by-id/`;
-- native `[probe_eddy_current ...]` support;
-- homing Z with native Eddy;
-- QGL and bed mesh;
-- DKEU3 integration;
-- OrcaSlicer Machine G-code integration;
-- first-layer validation;
-- filament calibration;
-- troubleshooting based on real failure cases.
+- migrazione firmware mainboard e toolboard;
+- percorso di recovery/update basato su Katapult;
+- identificazione stabile delle MCU tramite `/dev/serial/by-id/`;
+- supporto nativo `[probe_eddy_current ...]`;
+- homing Z con Eddy nativo;
+- QGL e bed mesh;
+- integrazione DKEU3;
+- integrazione Machine G-code di OrcaSlicer;
+- validazione del first layer;
+- calibrazione filamento;
+- troubleshooting basato su casi di guasto reali.
 
-## Verified migration baseline
+## Baseline di migrazione verificata
 
-The Phoenix migration reached a fully operational Mainline system with:
+La migrazione Phoenix ha raggiunto un sistema Mainline pienamente operativo con:
 
 - Klipper Mainline `v0.13.0-718-gd8659974-dirty`;
-- Klipper commit `d865997403cad36d105026f73a4b76dcacec4c76`;
+- commit Klipper `d865997403cad36d105026f73a4b76dcacec4c76`;
 - Moonraker;
 - Mainsail;
 - KlipperScreen;
-- mainboard and toolboard on Mainline-compatible firmware;
-- native Eddy using `[probe_eddy_current eddy]`;
-- full `G28`;
-- native probing;
+- mainboard e toolboard con firmware compatibile Mainline;
+- Eddy nativo tramite `[probe_eddy_current eddy]`;
+- `G28` completo;
+- probing nativo;
 - QGL;
 - bed mesh;
 - DKEU;
 - OrcaSlicer;
-- successful real printing after migration.
+- stampa reale completata con successo dopo la migrazione.
 
-These version numbers describe the tested Phoenix baseline.
+Questi numeri di versione descrivono la baseline Phoenix realmente testata. Non sono un requisito per restare bloccati su quegli esatti commit.
 
-They are not a requirement to remain frozen on those exact commits.
+Per una nuova migrazione, confronta sempre la documentazione upstream corrente prima di installare o patchare software.
 
-For a new migration, always compare with the current upstream documentation before installing or patching software.
+## Eddy nativo
 
-## Native Eddy
+La migrazione Phoenix inizialmente utilizzava il percorso esterno `probe_eddy_ng`.
 
-The old Phoenix migration initially used the external `probe_eddy_ng` path.
+Quel percorso è stato successivamente abbandonato perché l'ambiente Mainline corrente include già il supporto Eddy nativo e il plugin legacy creava problemi nel percorso di homing Z.
 
-That path was eventually abandoned because the current Mainline environment already provides native Eddy support and the legacy plugin created problems in the Z-homing path.
-
-The current community documentation therefore treats:
+La documentazione community considera quindi:
 
 `[probe_eddy_current ...]`
 
-as the baseline.
+come baseline.
 
-See:
+Vedi [Eddy nativo](docs/native-eddy.md).
 
-[Native Eddy](docs/native-eddy.md)
-
-Phoenix-specific values such as:
-
-- offsets;
-- `reg_drive_current`;
-- `max_sensor_hz`;
-- calibration curves;
-
-are examples, not universal presets.
+Valori specifici Phoenix come offset, `reg_drive_current`, `max_sensor_hz` e curve di calibrazione sono esempi, non preset universali.
 
 ## Demon / DKEU3
 
-Demon Klipper Essentials Unified is integrated only after the basic Mainline machine is already working.
+Demon Klipper Essentials Unified viene integrato solo dopo che la macchina Mainline di base è già funzionante.
 
-Do not use Demon as a substitute for validating:
+Non usare Demon come sostituto della validazione di comunicazione MCU, direzioni stepper, heater, endstop, homing, Eddy o QGL.
 
-- MCU communication;
-- stepper directions;
-- heaters;
-- endstops;
-- homing;
-- Eddy;
-- QGL.
+La guida documenta anche una lezione importante emersa dalla migrazione reale: un vecchio override locale di una macro può sostituire silenziosamente una macro DKEU più recente e creare un problema di stampa anche quando probing, QGL e mesh sembrano corretti.
 
-The guide also documents an important real migration lesson:
+Vedi [Integrazione Demon / DKEU3](docs/demon-integration.md).
 
-a legacy local macro override can silently replace a newer DKEU macro and create a printing problem even when probing, QGL and mesh all appear correct.
+## Filosofia di troubleshooting
 
-See:
+La migrazione segue intenzionalmente un approccio basato sulle evidenze.
 
-[Demon / DKEU3 integration](docs/demon-integration.md)
+Se homing funziona, il probing è ripetibile, QGL converge e la mesh è coerente, ma la stampa è ancora errata, controlla override delle macro, riallineamento Z, profilo slicer, G-code generato e residui della migrazione software prima di modificare gantry, motori Z, viti del bed, axis twist o geometria meccanica.
 
-## Troubleshooting philosophy
+Diversi problemi Phoenix che inizialmente sembravano meccanici si sono rivelati problemi software/configurazione.
 
-The migration intentionally follows an evidence-first approach.
+Vedi [Troubleshooting](docs/troubleshooting.md).
 
-If:
+## Caso di studio Phoenix
 
-- homing works;
-- probing is repeatable;
-- QGL converges;
-- mesh is coherent;
-
-but printing is still wrong, inspect:
-
-- macro overrides;
-- Z realignment;
-- slicer profile;
-- generated G-code;
-- software migration leftovers;
-
-before changing:
-
-- gantry;
-- Z motors;
-- bed screws;
-- axis twist;
-- mechanical geometry.
-
-Several Phoenix failures that initially looked mechanical were ultimately software/configuration problems.
-
-See:
-
-[Troubleshooting](docs/troubleshooting.md)
-
-## Phoenix case study
-
-The complete chronological migration history is preserved separately under:
+La cronologia completa e cronologica della migrazione è conservata separatamente sotto:
 
 `docs/migration-history/phoenix/`
 
-It contains:
+Contiene:
 
-- intermediate states;
-- failed experiments;
-- temporary workarounds;
-- measurements;
-- root-cause investigations;
-- final fixes.
+- stati intermedi;
+- esperimenti falliti;
+- workaround temporanei;
+- misure;
+- indagini sulle root cause;
+- correzioni finali.
 
-This history is useful for debugging and technical archaeology.
+Questa cronologia è utile per debugging e archeologia tecnica. **Non** è la procedura di installazione step-by-step raccomandata.
 
-It is **not** the recommended step-by-step installation guide.
+## Esempi Phoenix
 
-## Phoenix examples
-
-Phoenix-specific examples are stored under:
+Gli esempi specifici Phoenix sono conservati sotto:
 
 `examples/phoenix/`
 
-These may include:
+Possono includere:
 
-- hardware notes;
-- OrcaSlicer profiles;
-- project roadmap;
-- machine-specific values.
+- note hardware;
+- profili OrcaSlicer;
+- roadmap del progetto;
+- valori specifici della macchina.
 
-Do not assume these files can be copied unchanged to another SV08.
+Non assumere che questi file possano essere copiati invariati su un'altra SV08.
 
-## Calibration
+## Calibrazione
 
-The repository separates three different classes of calibration:
+Il repository separa tre classi di calibrazione:
 
-### Machine
+### Macchina
 
-Examples:
+Esempi:
 
 - PID;
-- stepper configuration;
-- endstops;
-- heaters.
+- configurazione stepper;
+- endstop;
+- heater.
 
 ### Bed / Z
 
-Examples:
+Esempi:
 
-- Eddy calibration;
+- calibrazione Eddy;
 - QGL;
-- Z reference;
+- riferimento Z;
 - mesh;
 - first layer.
 
-### Filament
+### Filamento
 
-Examples:
+Esempi:
 
-- temperature;
+- temperatura;
 - flow ratio;
 - pressure advance;
 - retraction;
 - max volumetric speed.
 
-See:
+Vedi [Validazione e calibrazione](docs/validation-and-calibration.md).
 
-[Validation and calibration](docs/validation-and-calibration.md)
+## Modifiche hardware
 
-## Hardware modifications
+La baseline community Mainline è intenzionalmente separata dal successivo sviluppo hardware Phoenix.
 
-The community Mainline baseline is intentionally kept separate from later Phoenix hardware development.
+Modifiche future o specifiche della macchina possono includere:
 
-Future or machine-specific changes may include:
-
-- graphite bed;
-- toolhead redesign;
-- CAN bus;
+- piatto in grafite;
+- redesign toolhead;
+- bus CAN;
 - EBB36 / EBB42;
-- enclosure modifications;
+- modifiche enclosure;
 - SSR;
-- insulation;
-- umbilical redesign.
+- isolamento;
+- redesign umbilical.
 
-These modifications should not redefine the basic migration procedure.
+Queste modifiche non devono ridefinire la procedura di migrazione base.
 
-## Repository rules
+## Regole del repository
 
-Do not commit:
+Non committare:
 
-- passwords;
-- Wi-Fi credentials;
-- tokens;
-- private keys;
-- SSH host keys;
-- personal MCU dumps intended only for rollback;
-- full private eMMC images;
-- machine-specific secrets.
+- password;
+- credenziali Wi-Fi;
+- token;
+- chiavi private;
+- host key SSH;
+- dump MCU personali destinati solo al rollback;
+- immagini eMMC private complete;
+- segreti specifici della macchina.
 
-Before making a branch or release public, perform a privacy audit of:
+Prima di rendere pubblico un branch o una release, esegui un audit privacy di:
 
-- current files;
-- Git history;
-- branches;
-- tags;
-- release assets.
+- file correnti;
+- storia Git;
+- branch;
+- tag;
+- asset delle release.
 
-## Firmware and binary artifacts
+## Firmware e artefatti binari
 
-Personal original firmware dumps belong in local backup storage, not in the public repository history.
+I dump originali personali del firmware devono restare nei backup locali, non nella storia pubblica del repository.
 
-Prepared migration firmware should be reproducible from documented build settings whenever possible.
+Il firmware preparato per la migrazione deve essere riproducibile tramite parametri di build documentati quando possibile.
 
-If large binary images or sanitized system images are distributed in the future, GitHub Releases are preferred over normal Git history.
+Se in futuro verranno distribuite immagini binarie grandi o immagini di sistema sanitizzate, le GitHub Releases sono preferibili alla normale storia Git.
 
-## Upstream projects
+## Progetti upstream
 
-This project builds on work from the Klipper and SV08 communities, including:
+Questo progetto si basa sul lavoro delle community Klipper e SV08, inclusi:
 
 - Klipper;
 - Moonraker;
 - Mainsail;
 - KIAUH;
 - Katapult;
-- Rappetor's Sovol SV08 Mainline work;
+- il lavoro Sovol SV08 Mainline di Rappetor;
 - Demon Klipper Essentials Unified;
 - OrcaSlicer.
 
-Always consult the relevant upstream project before applying old workarounds from migration history.
+Consulta sempre il progetto upstream pertinente prima di applicare vecchi workaround provenienti dalla cronologia di migrazione.
 
-## Project status
+## Politica linguistica
 
-The community documentation currently covers the complete path from backup to a working Mainline + native Eddy + DKEU printing system.
+L'italiano è la lingua principale del repository. L'inglese viene mantenuto come secondo percorso community completo.
 
-The next repository phase is cleanup and publication preparation:
-
-- cross-link audit;
-- stale-path audit;
-- privacy audit;
-- branch/history audit;
-- review of binary firmware artifacts;
-- final public-repository readiness check.
+La cronologia di sviluppo Phoenix e le note archivistiche specifiche della macchina possono restare in italiano quando non fanno parte della procedura community riutilizzabile.
