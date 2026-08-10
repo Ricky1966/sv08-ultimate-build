@@ -261,3 +261,14 @@ Consulta sempre il progetto upstream pertinente prima di applicare vecchi workar
 L'italiano è la lingua principale del repository. L'inglese viene mantenuto come secondo percorso community completo.
 
 La cronologia di sviluppo Phoenix e le note archivistiche specifiche della macchina possono restare in italiano quando non fanno parte della procedura community riutilizzabile.
+
+## Licenza
+
+Il materiale originale di questo repository è distribuito secondo i termini della **GNU General Public License v3.0 or later**, nella misura in cui il relativo copyright sia detenuto dagli autori del progetto.
+
+Vedi:
+
+- [`LICENSE`](LICENSE) — testo completo della licenza;
+- [`NOTICE.md`](NOTICE.md) — attribuzioni, materiale di terze parti, preset derivati e marchi.
+
+I progetti upstream citati o utilizzati mantengono le rispettive licenze.
