@@ -1,5 +1,7 @@
 # Prepared Mainline firmware — 2026-08-02
 
+**Lingue:** **Italiano** | [English](README.en.md)
+
 Questa directory documenta i firmware utilizzati durante la migrazione originale della Sovol SV08 Phoenix a Klipper Mainline.
 
 I binari precompilati non vengono distribuiti direttamente nella storia Git pubblica.
