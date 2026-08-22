@@ -38,22 +38,44 @@ Bed other layers: 60 °C
 Flow Ratio: 1.0465
 Pressure Advance: 0.034
 Max Volumetric Speed: 22 mm³/s
+Retraction length: 0.4 mm
+Retraction speed: 35 mm/s
 ```
 
-Resta da eseguire un test retrazione dedicato: durante alcune stampe utili sono stati osservati piccoli fili negli spostamenti.
+## Calibrazione retrazione PolyTerra PLA
+
+È stata eseguita una torre retrazione Orca con:
+
+```text
+Start: 0.2 mm
+End:   1.2 mm
+Step:  0.1 mm
+Speed: 35 mm/s
+```
+
+Il G-code è stato verificato prima della stampa: la progressione copriva correttamente `0.2 -> 1.2 mm` con incrementi di `0.1 mm`.
+
+La torre è risultata molto pulita già nella parte bassa, senza una zona di miglioramento netto che giustificasse retrazioni elevate da `1.0-1.2 mm`. Sono comparsi solo pochi fili sporadici, non una ragnatela sistematica tra i pilastri.
+
+Valore operativo scelto e salvato nel profilo PolyTerra PLA:
+
+```text
+Retraction length = 0.4 mm
+Retraction speed  = 35 mm/s
+```
+
+Non sono stati modificati contemporaneamente temperatura, flow, PA o MVS.
 
 ## Verifica primo layer a 5 zone
 
 È stato preparato un test con cinque aree: centro + quattro angoli, un solo layer da `0.20 mm`, con brim esterno `5 mm`, gap `0`.
 
-Start G-code verificato:
+Start G-code verificato all'epoca del test:
 
 ```gcode
 PHOENIX_START EXTRUDER=210 BED=65 LAYER=0.2 FILAMENT=PLA
 SET_PRESSURE_ADVANCE ADVANCE=0.034
 ```
-
-Stato termico prima del test: macchina accesa da oltre un'ora.
 
 QGL:
 
@@ -96,11 +118,19 @@ L'ipotesi resta da verificare; non è stata fatta alcuna modifica alla mesh o al
 
 ## Conferma zona centrale su stampe reali
 
-Una prima stampa utile, centrata sul piatto, ha mostrato una faccia inferiore / primo layer visivamente uniforme e ben aderente.
+La prima stampa utile, piccola e centrata, aveva già mostrato una faccia inferiore / primo layer visivamente uniforme e ben aderente.
 
-Una seconda stampa utile, più larga ma sempre centrata, era ancora in corso al momento di questa nota; la faccia inferiore sarà valutata a stampa terminata capovolgendo il pezzo.
+La seconda stampa utile, molto più larga ma ancora nella zona centrale, è stata poi terminata e fotografata sia sopra sia sulla faccia inferiore. Il vero primo layer è risultato molto buono sull'intera impronta del pezzo:
 
-Queste osservazioni rafforzano l'idea che il problema di primo layer sia locale e non un errore globale di Z.
+- texture PEI uniforme;
+- linee ben fuse;
+- nessun gap evidente;
+- nessuna zona strappata dal nozzle;
+- nessuna variazione significativa lungo l'estensione del pezzo.
+
+Questo conferma che **non va corretto lo Z globale**. La compensazione centrale funziona bene anche su un oggetto di impronta maggiore; le anomalie FL/FR restano quindi da trattare come fenomeno locale, non come errore generale di offset o mesh.
+
+Le irregolarità viste sulla parte superiore della seconda stampa non sono state usate per correggere Z, flow o PA: sono un problema distinto e richiedono lettura dello slicing/G-code prima di qualsiasi modifica.
 
 ## Compensazione mesh — verifica
 
@@ -113,101 +143,178 @@ mesh min: -0.020 mm
 mesh range: 0.051 mm
 ```
 
-`GET_POSITION` ha mostrato:
+`GET_POSITION` aveva mostrato:
 
 ```text
 toolhead Z: 1.500000
 gcode Z:    1.515444
 ```
 
-Quindi la compensazione mesh è effettivamente attiva; non siamo nel caso di una mesh generata ma non applicata.
-
-## Revisione logica heat soak
-
-La logica precedente in `phoenix-print-start-end.cfg` usava:
+Un'ulteriore verifica del 22 agosto, dopo adaptive mesh `15x15`, ha mostrato:
 
 ```text
-soak_valid
-soak_temp
-soak_minutes
-cooldown_seconds
+toolhead Z: 1.620762
+gcode Z:    1.600000
 ```
 
-Il credito soak veniva invalidato dopo `600 s` di bed spento, indipendentemente dalla temperatura reale raggiunta.
+Anche qui la compensazione è effettivamente attiva. Non siamo nel caso di una mesh generata ma non applicata.
 
-### Analisi `klippy.log`
+## Mesh/QGL dopo soak completo
 
-Il log registra normalmente gli `Stats` con:
+Dopo il primo caricamento runtime della nuova logica thermal credit è stato eseguito un soak completo a `65 °C`.
+
+QGL:
 
 ```text
-heater_bed: target=<...> temp=<...> pwm=<...>
+Retries: 2/5
+Probed points range: 0.015889 mm
+tolerance: 0.050000
 ```
 
-Sequenza reale osservata nella sessione:
+Adaptive rapid mesh:
 
 ```text
-216.9   target=70 temp=71.4
-3689.9  target=0  temp=69.9
-5878.9  target=65 temp=38.3
-7233.8  target=0  temp=65.0
-7250.9  target=65 temp=64.3
-8346.4  target=60 temp=65.1
+size: 15x15
+max: +0.059 mm
+min: -0.047 mm
+range: 0.106 mm
 ```
 
-Questa sequenza dimostra che due riaccensioni non sono equivalenti:
+Il risultato è praticamente sovrapponibile al precedente range `0.105 mm`, quindi la geometria termica del bed resta coerente.
 
-- bed spento ~17 s e ancora a `64.3 °C`: nessun motivo per rifare un soak completo;
-- bed raffreddato fino a `38.3 °C`: il credito termico è realmente perso.
+## Thermal credit — analisi e test runtime
 
-È stato verificato che `klippy.log` è quasi continuo durante l'uso attivo, ma può avere buchi significativi durante periodi idle/cooldown. Un caso reale:
+La prima revisione sostituiva il vecchio `cooldown_seconds` con `thermal_credit_seconds` e usava una soglia `soak_temp - 6 °C`.
+
+Il primo test runtime ha confermato:
+
+1. dopo `RESTART`, stato iniziale senza credito;
+2. `PHOENIX_START BED=65 EXTRUDER=210` -> `soak 10.0 min @ 65.0C`;
+3. al termine del soak:
 
 ```text
-prima: Stats 4590.6, target=0, temp=50.0
-poi:   Stats 5878.9, target=65, temp=38.3
-buco:  ~1288.3 s
+soak_valid: 1
+soak_temp: 65.0
+soak_minutes: 10
+thermal_credit_seconds: 600
 ```
 
-Pertanto il log non è stato scelto come unica fonte runtime del credito termico.
+4. passaggio bed `65 -> 60 °C`: credito rimasto `600`;
+5. nella prima implementazione, discesa a `58.6-58.8 °C` (< floor `59.0 °C`) -> credito azzerato;
+6. preriscaldamento manuale a `65 °C` -> riaccumulo verificato, per esempio `thermal_credit_seconds: 40` dopo circa 40 s utili;
+7. un successivo `PHOENIX_START` ha realmente usato il credito parziale, mostrando `soak 9.0 min @ 65.0C`.
 
-## Nuova logica thermal credit — file già patchato, non ancora caricato
+Questi test hanno confermato che il meccanismo di credito era funzionante, ma hanno anche mostrato un difetto concettuale: l'azzeramento istantaneo appena sotto `ref - 6 °C` era troppo aggressivo.
 
-Backup creato prima della modifica:
+## Thermal credit — logica finale con decadimento graduale
+
+È stato creato il backup:
 
 ```text
-/home/biqu/printer_data/config/phoenix-print-start-end.cfg.before-thermal-history-20260822
+/home/biqu/printer_data/config/phoenix-print-start-end.cfg.before-thermal-credit-decay-20260822
 ```
 
-La patch sostituisce `cooldown_seconds` con:
+Il watcher è stato modificato in modo che sotto la soglia termica il credito **non venga più azzerato istantaneamente**.
+
+Logica finale:
+
+- watcher ogni `10 s`;
+- se `temp >= soak_temp - 6 °C` e heater target > 0, il credito cresce di `10 s` ogni `10 s`, fino al massimo configurato;
+- se `temp >= soak_temp - 6 °C` e il credito è già pieno, resta pieno;
+- se `temp < soak_temp - 6 °C`, il credito cala di `10 s` ogni `10 s`;
+- minimo `0`;
+- nessun precipizio artificiale passando, per esempio, da `59.0` a `58.8 °C` con riferimento `65 °C`.
+
+Esempio concettuale:
 
 ```text
-thermal_credit_seconds
+credito 600 s
+bed scende sotto 59 °C per 30 s
+=> credito circa 570 s
+=> prossima stampa richiede circa 30 s di soak residuo
 ```
 
-Principio:
+Un raffreddamento prolungato porta invece naturalmente il credito a zero.
 
-- dopo un soak completo: credito `600 s`;
-- riferimento: `soak_temp`;
-- soglia termica: `soak_temp - 6 °C`;
-- se la temperatura reale scende sotto la soglia: credito azzerato;
-- se il bed è acceso, è tornato sopra soglia e il credito è <600: il watcher riaccumula credito a blocchi di 10 s;
-- `PHOENIX_START` aspetta `600 - thermal_credit_seconds`.
+## Soak configurabile
 
-Esempi attesi per PLA `65 °C`:
+Durante la stessa sessione è stato deciso di eliminare il limite fisso di `600 s` dalla logica operativa, mantenendolo solo come default.
+
+Backup creato prima della parametrizzazione:
 
 ```text
-65 -> OFF -> 64.3 °C per pochi secondi
-=> credito resta praticamente pieno
-
-65 -> OFF -> temperatura sotto 59 °C
-=> credito azzerato
-
-riaccensione e permanenza sopra soglia per 7 minuti
-=> credito ~420 s, soak residuo ~180 s
+/home/biqu/printer_data/config/phoenix-print-start-end.cfg.before-configurable-soak-20260822
 ```
 
-La normale transizione del profilo PolyTerra `65 -> 60 °C` resta sopra la soglia `59 °C`, quindi non annulla il credito.
+Lo stato runtime contiene ora:
 
-### Parte nozzle lasciata invariata
+```text
+variable_soak_total_seconds: 600
+```
+
+`PHOENIX_START` accetta:
+
+```text
+SOAK_SECONDS=<secondi>
+```
+
+Esempi:
+
+```gcode
+PHOENIX_START BED=65 EXTRUDER=210 SOAK_SECONDS=300
+PHOENIX_START BED=65 EXTRUDER=210 SOAK_SECONDS=600
+PHOENIX_START BED=65 EXTRUDER=210 SOAK_SECONDS=900
+```
+
+Il valore scelto governa contemporaneamente:
+
+- durata soak totale;
+- credito massimo;
+- clamp del credito precedente;
+- credito impostato al termine di un soak completato;
+- riaccumulo del watcher.
+
+Dopo `RESTART` la configurazione è stata accettata da Klipper e lo stato iniziale verificato:
+
+```text
+soak_valid: 0
+soak_temp: 0.0
+soak_minutes: 0
+soak_total_seconds: 600
+thermal_credit_seconds: 0
+```
+
+Test override reale:
+
+```gcode
+PHOENIX_START BED=65 EXTRUDER=210 SOAK_SECONDS=300
+```
+
+Risultato console:
+
+```text
+Phoenix Thermal State: soak 5.0 min @ 65.0C
+```
+
+Quindi l'override configurabile è funzionante.
+
+## Orca — passaggio SOAK_SECONDS
+
+Il Machine start G-code di Orca è stato aggiornato a:
+
+```gcode
+PHOENIX_START EXTRUDER=[nozzle_temperature_initial_layer] BED=[bed_temperature_initial_layer_single] LAYER=[layer_height] FILAMENT=[filament_type] SOAK_SECONDS=600
+```
+
+Il G-code rigenerato è stato verificato e contiene realmente:
+
+```gcode
+PHOENIX_START EXTRUDER=210 BED=65 LAYER=0.2 FILAMENT=PLA SOAK_SECONDS=600
+```
+
+In questo modo la durata può essere modificata a `300`, `600`, `900`, ecc. dal profilo Orca senza intervenire sul file Klipper.
+
+## Protezione nozzle invariata
 
 Resta separata e intatta la protezione già validata:
 
@@ -219,30 +326,42 @@ TEMPERATURE_WAIT SENSOR=extruder MAXIMUM=50
 Nessuna modifica a:
 
 - Eddy;
+- curve Eddy;
+- `reg_drive_current`;
 - QGL;
 - adaptive rapid mesh;
 - CLEAN_NOZZLE;
 - temperature finali;
-- LINE_PURGE.
+- LINE_PURGE;
+- viti bed;
+- parametri protetti extruder.
 
-### Stato patch al momento della nota
+## Nota sui test manuali PHOENIX_START
 
-La modifica è presente su disco ma **non è ancora caricata da Klipper**, perché una stampa è in corso. È stato deliberatamente evitato qualsiasi `RESTART` durante la stampa.
+Durante i test è stato osservato un blob di PLA nel punto finale della purge line. La causa non era mesh o primo layer: `PHOENIX_START` era stato lanciato manualmente senza una stampa successiva, quindi dopo `LINE_PURGE` il nozzle era rimasto caldo e fermo, continuando a colare.
 
-Dopo la fine della stampa:
+Questo artefatto non rappresenta il normale flusso di stampa. Per test futuri della sola logica soak va evitato di lasciare completare inutilmente un `PHOENIX_START` manuale fino alla purge se non seguirà una stampa.
 
-1. `RESTART` da Mainsail;
-2. verificare ritorno `Ready`;
-3. test controllato della nuova logica thermal credit.
+## Stato operativo a fine aggiornamento
+
+- PolyTerra PLA: MVS `22 mm³/s`;
+- Flow Ratio `1.0465`;
+- PA `0.034`;
+- retrazione `0.4 mm @ 35 mm/s`;
+- primo layer centrale confermato buono anche su impronta più ampia;
+- Z globale invariato;
+- viti bed non toccate;
+- rapid scan mantenuto con `METHOD=rapid_scan`;
+- thermal credit con decadimento/riaccumulo graduale;
+- soak configurabile con default `600 s` e override `SOAK_SECONDS`;
+- Orca passa esplicitamente `SOAK_SECONDS=600`.
 
 ## Prossimi passi
 
-1. terminare la stampa utile attualmente in corso;
-2. capovolgere il pezzo e valutare la faccia inferiore / primo layer;
-3. fare `RESTART` da Mainsail per caricare la nuova logica heat soak;
-4. testare il thermal credit in modo controllato;
-5. eseguire calibrazione retrazione PolyTerra PLA per ridurre i piccoli fili osservati;
-6. riprendere l'analisi locale del primo layer solo se ancora necessario, senza modificare Z globale, viti o Eddy in assenza di nuova evidenza.
+1. fare un lavoro di fino sulla logica/macros senza riaprire componenti già validati;
+2. eventualmente verificare in uso reale una seconda stampa avviata poco dopo la prima, senza `RESTART`, per osservare il credito residuo nel caso reale;
+3. tornare al problema locale FL/FR solo se necessario, includendo verifica fisica della serigrafia PEI a piatto freddo;
+4. non correggere lo Z globale finché le stampe centrali continuano a mostrare un primo layer corretto.
 
 ## Regole operative ancora valide
 
