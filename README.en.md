@@ -249,35 +249,6 @@ Future or machine-specific changes may include:
 
 These modifications should not redefine the basic migration procedure.
 
-## Repository rules
-
-Do not commit:
-
-- passwords;
-- Wi-Fi credentials;
-- tokens;
-- private keys;
-- SSH host keys;
-- personal MCU dumps intended only for rollback;
-- full private eMMC images;
-- machine-specific secrets.
-
-Before making a branch or release public, perform a privacy audit of:
-
-- current files;
-- Git history;
-- branches;
-- tags;
-- release assets.
-
-## Firmware and binary artifacts
-
-Personal original firmware dumps belong in local backup storage, not in the public repository history.
-
-Prepared migration firmware should be reproducible from documented build settings whenever possible.
-
-If large binary images or sanitized system images are distributed in the future, GitHub Releases are preferred over normal Git history.
-
 ## Upstream projects
 
 This project builds on work from the Klipper and SV08 communities, including:
