@@ -264,12 +264,6 @@ This project builds on work from the Klipper and SV08 communities, including:
 
 Always consult the relevant upstream project before applying old workarounds from migration history.
 
-## Language policy
-
-Italian is the primary language of this repository. English is maintained as the complete second-language community path.
-
-Phoenix development history and machine-specific archival notes may remain Italian when they are not part of the reusable community procedure.
-
 ## License
 
 Original material in this repository is distributed under the **GNU General Public License v3.0 or later**, to the extent that copyright in that material is held by the project authors.
