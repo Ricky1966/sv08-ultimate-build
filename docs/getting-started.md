@@ -10,17 +10,17 @@ Questo repository documenta una migrazione reale e verificata di una **Sovol SV0
 - Mainsail;
 - KlipperScreen, se utilizzato;
 - Phoenix Macros;
-- hardware Sovol Eddy NG tramite supporto Eddy nativo di Klipper;
+- Sovol Zero Extruder Kit con probe Eddy integrato, gestito tramite supporto Eddy nativo di Klipper;
 - OrcaSlicer.
 
-L'obiettivo non è sostituire le guide upstream esistenti, ma fornire un secondo percorso documentato, basato su una macchina realmente migrata fino alla stampa.
+L'obiettivo non è sostituire le guide upstream esistenti, ma fornire un mio percorso documentato, basato su una macchina realmente migrata fino alla stampa.
 
 Sono documentati anche:
 
 - tentativi che non hanno funzionato;
 - configurazioni legacy incompatibili con Mainline;
 - sintomi osservati;
-- root cause verificate;
+- cause dei problemi effettivamente verificate;
 - correzioni applicate;
 - procedure di rollback.
 
@@ -28,7 +28,7 @@ Sono documentati anche:
 
 La guida primaria per la migrazione della SV08 resta:
 
-`Rappetor/Sovol-SV08-Mainline`
+[Rappetor/Sovol-SV08-Mainline](https://github.com/Rappetor/Sovol-SV08-Mainline)
 
 Questo repository deve essere considerato complementare.
 
@@ -38,15 +38,13 @@ Quando una procedura upstream cambia, la documentazione corrente del progetto or
 
 La migrazione descritta è stata verificata su una Sovol SV08 con:
 
-- computer Linux e mainboard originali Sovol/MKS con eMMC;
+- computer Linux Sovol/MKS;
+- sistema di migrazione e validazione avviato da **MicroSD**;
 - mainboard originale Sovol;
-- toolboard originale Sovol;
-- MCU STM32F103 su mainboard e toolboard;
-- probe hardware Sovol Eddy NG / LDC1612;
-- hotend MicroSwiss FlowTech;
+- **Sovol Zero Extruder Kit**;
+- MCU STM32F103 sulla mainboard;
+- **probe Eddy integrato nella Sovol Zero**, gestito tramite supporto Eddy nativo di Klipper;
 - nozzle 0.4 mm.
-
-Il FlowTech **non è un requisito** per la migrazione a Mainline.
 
 Le modifiche hardware specifiche della macchina di test sono documentate separatamente sotto `examples/phoenix/`.
 
@@ -59,8 +57,8 @@ La macchina di validazione è attualmente operativa con:
 - Mainsail;
 - KlipperScreen;
 - Crowsnest;
-- Demon Klipper Essentials Unified;
-- Eddy gestito tramite `[probe_eddy_current eddy]`.
+- Phoenix Macros;
+- Eddy integrato nella Sovol Zero e gestito tramite `[probe_eddy_current eddy]`.
 
 Configurazione Klipper validata al termine della migrazione:
 
@@ -82,60 +80,66 @@ Non interpretare "latest CB1 release" come "versione raccomandata per SV08 Mainl
 
 Una futura immagine verrà adottata solo dopo una nuova verifica end-to-end sulla SV08.
 
-## Eddy: usare il supporto Mainline corrente
+## Eddy: supporto nativo Klipper Mainline sulla Sovol Zero
 
-Klipper Mainline corrente dispone di supporto Eddy nativo con diversi metodi di probing, inclusi:
+La configurazione Phoenix utilizza il probe Eddy integrato nella **Sovol Zero Extruder Kit**, gestito direttamente tramite il supporto Eddy nativo di Klipper Mainline.
 
-- default probing;
+La configurazione utilizza:
+
+`[probe_eddy_current eddy]`
+
+Klipper Mainline supporta diversi metodi di probing Eddy, inclusi:
+
+- probing standard;
 - scan;
 - rapid scan;
 - tap.
 
-La macchina usata per questa migrazione utilizza il probe hardware Sovol Eddy NG / LDC1612 attraverso:
+La configurazione specifica della Sovol Zero e i parametri Eddy validati sulla Phoenix sono documentati nella pagina dedicata:
 
-`[probe_eddy_current eddy]`
+`docs/zero-toolhead-eddy-2026-08-17.md`
 
-Parametri validati sulla macchina di test:
+Questi valori descrivono **la configurazione Phoenix realmente testata** e non devono essere considerati preset universali.
 
-- `sensor_type: ldc1612`
-- `i2c_mcu: extra_mcu`
-- `i2c_scl: PB6`
-- `i2c_sda: PB7`
-- `x_offset: -16.43`
-- `y_offset: 10.22`
-- `descend_z: 0.5`
-- `max_sensor_hz: 9000000`
-- `reg_drive_current: 22`
+Offset, calibrazione, curva Eddy e comportamento del probe devono essere verificati sulla propria macchina.
 
-Questi valori descrivono la macchina realmente testata.
+Durante una fase precedente dello sviluppo Phoenix era stato utilizzato un percorso esterno basato su `probe_eddy_ng.py`. Questo approccio è stato successivamente abbandonato dopo la migrazione al supporto Eddy nativo di Klipper Mainline.
 
-Gli offset e le calibrazioni Eddy devono essere verificati sulla propria stampante e non copiati alla cieca.
-
-Il vecchio percorso basato su una patch locale `probe_eddy_ng.py` non è il percorso raccomandato da questo repository per Klipper Mainline corrente.
-
-Durante la migrazione della macchina di test quel percorso è stato inizialmente utilizzato e successivamente abbandonato in favore del supporto Eddy nativo Mainline.
-
-La cronologia completa del passaggio è conservata sotto:
+La cronologia tecnica completa resta disponibile sotto:
 
 `docs/migration-history/phoenix/`
 
-## Demon Klipper Essentials Unified
+## Phoenix Macros
 
-DKEU è un progetto attivo e in evoluzione.
+La configurazione attuale utilizza un insieme autonomo di macro sviluppato durante la migrazione Phoenix.
 
-La migrazione verificata utilizza Demon con Klipper Mainline ed Eddy nativo, ma questo repository non distribuisce una copia congelata delle macro Demon come sorgente primaria.
+Le **Phoenix Macros** sono state progressivamente derivate, riscritte e adattate durante il lavoro svolto su Klipper Mainline, Eddy nativo e sulla configurazione reale della macchina.
 
-Installare e consultare la versione corrente del repository ufficiale:
+Demon Klipper Essentials Unified (DKEU) ha avuto un ruolo importante durante una fase dello sviluppo ed è riconosciuto come progetto upstream di riferimento, ma **non è più una dipendenza runtime della configurazione Phoenix attuale**.
 
-`3DPrintDemon/Demon_Klipper_Essentials_Unified`
+La baseline corrente:
 
-Al momento della verifica, DKEU è nella generazione DKEU3 e include gestione dedicata delle differenze fra Klipper Mainline moderno e versioni factory/legacy.
+- non include DKEU;
+- non dipende da macro DKEU durante il funzionamento;
+- utilizza macro `PHOENIX_*` dedicate;
+- utilizza il bed mesh nativo di Klipper con rapid scan e adaptive meshing;
+- integra direttamente il flusso di stampa con OrcaSlicer.
 
-La configurazione Orca verificata sulla macchina di test utilizza il Machine G-code Demon `v1.4`.
+Le Phoenix Macros comprendono funzioni per:
 
-Le configurazioni Phoenix specifiche sono conservate separatamente sotto:
+- avvio e fine stampa;
+- pulizia nozzle;
+- caricamento, scaricamento e cambio filamento;
+- gestione runout;
+- calibrazioni;
+- diagnostica di probe, mesh, sensori e stepper;
+- procedure di setup della macchina.
 
-`examples/phoenix/`
+Le macro esposte e caricate da Klipper non devono essere confuse con quelle già fisicamente validate: la documentazione di validazione distingue esplicitamente i due stati.
+
+Vedi:
+
+`docs/phoenix-macros.md`
 
 ## Prima di iniziare
 
@@ -168,25 +172,30 @@ Ogni utente deve salvare i propri backup.
 Il percorso documentato è:
 
 1. inventario della macchina stock;
-2. backup configurazioni e dati necessari;
-3. preparazione del supporto CB1;
-4. avvio del nuovo sistema Linux;
-5. installazione Klipper, Moonraker e Mainsail;
-6. preparazione della configurazione SV08;
-7. backup firmware MCU originali;
-8. installazione Katapult;
-9. flash Klipper Mainline su mainboard e toolboard;
-10. verifica temperature, MCU, ventole e segnali di sicurezza;
-11. verifica assi ed endstop;
-12. homing controllato;
-13. integrazione Eddy nativo;
-14. integrazione Demon;
-15. QGL e mesh;
-16. calibrazione Z;
-17. prima stampa;
-18. calibrazione slicer e materiale.
+2. backup completo di configurazione, dati e possibilità di rollback;
+3. preparazione della **MicroSD** con immagine CB1;
+4. primo avvio del nuovo sistema Linux e verifica SSH/rete;
+5. installazione di KIAUH, Klipper Mainline, Moonraker, Mainsail e componenti necessari;
+6. preparazione della configurazione base SV08;
+7. backup dei firmware MCU originali;
+8. installazione di Katapult e flashing Mainline delle MCU interessate;
+9. verifica delle MCU, temperature, endstop, ventole e uscite prima di qualsiasi movimento;
+10. installazione e configurazione della **Sovol Zero Extruder Kit** e del relativo collegamento CAN;
+11. configurazione del **probe Eddy integrato nella Zero** tramite supporto nativo Klipper;
+12. verifica controllata degli assi e degli endstop;
+13. homing controllato;
+14. calibrazione e validazione Eddy;
+15. QGL;
+16. bed mesh / rapid scan e verifica della compensazione;
+17. calibrazione/riferimento Z e validazione del primo layer;
+18. installazione e configurazione delle **Phoenix Macros**;
+19. integrazione con OrcaSlicer;
+20. verifica completa del flusso `PHOENIX_START` → stampa → `PHOENIX_END`;
+21. prima stampa reale;
+22. calibrazioni del filamento e dello slicer;
+23. validazione delle funzioni accessorie e diagnostiche.
 
-Le fasi hardware e di probing devono essere completate prima di considerare la macchina pronta alla stampa.
+Le fasi hardware, MCU, probing e sicurezza devono essere completate prima di considerare la macchina pronta alla stampa.
 
 ## Cosa NON copiare alla cieca dalla configurazione stock
 
@@ -197,29 +206,7 @@ Durante la migrazione reale sono stati trovati elementi legacy che causavano pro
 - vecchie integrazioni Eddy;
 - macro scritte per API presenti nel Klipper Sovol ma non equivalenti in Mainline;
 - configurazioni di axis twist non più affidabili dopo la migrazione;
-- override locali che neutralizzavano macro Demon aggiornate.
-
-## Caso verificato: `_APPLY_EDDY_Z_OFFSET`
-
-Il problema più importante incontrato dopo la migrazione riguardava un vecchio override locale:
-
-`[gcode_macro _APPLY_EDDY_Z_OFFSET]`
-
-L'override era stato creato in precedenza per il Klipper Sovol 0.12, dove il percorso Demon aggiornato non era compatibile.
-
-Dopo il passaggio a Mainline l'override era rimasto nel `printer.cfg`.
-
-Il risultato era che la macro Demon corretta veniva neutralizzata e la posizione Z misurata dal probe non veniva applicata correttamente.
-
-Il sintomo osservato era un first layer fortemente errato nonostante QGL e mesh apparentemente validi.
-
-Rimuovendo l'override legacy, il percorso corretto è tornato operativo:
-
-`_PROBE_TAP -> _APPLY_EDDY_Z_OFFSET -> printer.probe.last_probe_position.z -> SET_KINEMATIC_POSITION`
-
-La ristampa dello stesso G-code ha mostrato un miglioramento netto e ha confermato la root cause.
-
-Questo caso è conservato nella cronologia tecnica Phoenix e verrà riportato anche nella documentazione troubleshooting.
+- override locali e residui di configurazioni precedenti non più compatibili con la baseline Phoenix.
 
 ## Come leggere questa guida
 
