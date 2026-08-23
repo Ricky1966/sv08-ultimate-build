@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/assets/phoenix-readme-logo.png" alt="Phoenix — Sovol SV08 Mainline Klipper" width="720">
+</p>
+
 # SV08 Ultimate Build
 
 
@@ -9,7 +13,7 @@
 >
 > The procedures, configurations, and modifications documented in this repository come from a migration that was actually performed and tested on a specific Sovol SV08, but **they do not guarantee compatibility or correct operation on every machine**.
 >
-> Klipper, Katapult, Eddy, DKEU, and the other software components evolve over time. The material documented here represents a verified state of this project and is not necessarily the current state of the art.
+> Klipper, Katapult, Eddy, Phoenix Macros, and the other software components evolve over time. The material documented here represents a verified state of this project and is not necessarily the current state of the art.
 >
 > Firmware flashing, configuration changes, wiring, calibration, and machine movements can result in loss of the original configuration, malfunction, or hardware damage if performed incorrectly.
 >
@@ -21,9 +25,11 @@ Community documentation for migrating a **Sovol SV08** from the factory software
 
 - CB1/Linux setup;
 - MCU backup, flashing and recovery;
+- replacement of the original toolhead with the Sovol Zero Extruder Kit;
+- replacement of the original bed with an R3men graphite bed;
 - Mainline printer configuration;
 - native Klipper Eddy support;
-- Demon Klipper Essentials Unified / DKEU3;
+- Phoenix Macros, developed and validated during the Phoenix migration;
 - calibration;
 - troubleshooting;
 - rollback.
@@ -38,11 +44,12 @@ If you are migrating a Sovol SV08, follow the guides in this order:
 2. [Backup and rollback](docs/en/backup-and-rollback.md)
 3. [CB1 and Klipper Mainline installation](docs/en/install-cb1-mainline.md)
 4. [MCU flashing and recovery](docs/en/flash-mcus.md)
-5. [Base Mainline configuration](docs/en/base-configuration.md)
-6. [Native Eddy](docs/en/native-eddy.md)
-7. [Demon / DKEU3 integration](docs/en/demon-integration.md)
-8. [Validation and calibration](docs/en/validation-and-calibration.md)
-9. [Troubleshooting](docs/en/troubleshooting.md)
+5. [Sovol Zero toolhead, native Eddy and graphite bed](docs/zero-toolhead-eddy-2026-08-17.md)
+6. [Base Mainline configuration](docs/en/base-configuration.md)
+7. [Native Eddy](docs/en/native-eddy.md)
+8. [Phoenix Macros](docs/phoenix-macros.md)
+9. [Validation and calibration](docs/en/validation-and-calibration.md)
+10. [Troubleshooting](docs/en/troubleshooting.md)
 
 A compatibility index for older links is also available:
 
@@ -78,7 +85,7 @@ The community path currently documents:
 - native `[probe_eddy_current ...]` support;
 - homing Z with native Eddy;
 - QGL and bed mesh;
-- DKEU3 integration;
+- Phoenix Macros integration;
 - OrcaSlicer Machine G-code integration;
 - first-layer validation;
 - filament calibration;
@@ -99,7 +106,7 @@ The Phoenix migration reached a fully operational Mainline system with:
 - native probing;
 - QGL;
 - bed mesh;
-- DKEU;
+- Phoenix Macros;
 - OrcaSlicer;
 - successful real printing after migration.
 
@@ -123,15 +130,32 @@ See [Native Eddy](docs/en/native-eddy.md).
 
 Phoenix-specific values such as offsets, `reg_drive_current`, `max_sensor_hz`, and calibration curves are examples, not universal presets.
 
-## Demon / DKEU3
+## Phoenix Macros
 
-Demon Klipper Essentials Unified is integrated only after the basic Mainline machine is already working.
+The current Phoenix configuration uses its own macro set on top of Klipper Mainline.
 
-Do not use Demon as a substitute for validating MCU communication, stepper directions, heaters, endstops, homing, Eddy, or QGL.
+On August 22, 2026, the separation audit from DKEU was completed. The current runtime has:
 
-The guide also documents an important real migration lesson: a legacy local macro override can silently replace a newer DKEU macro and create a printing problem even when probing, QGL and mesh all appear correct.
+- **21 `PHOENIX_*` macros correctly defined and exposed by Klipper**;
+- Core Pack;
+- Calibration Pack;
+- Debug Pack;
+- Setup Pack;
+- no active DKEU include;
+- no DKEU runtime dependency in Phoenix files;
+- no `M84`, `force_move`, or `save_variables` in the Phoenix layer;
+- native Klipper bed mesh with rapid scan and adaptive meshing in the print workflow;
+- external components kept separate and attributed to their respective projects.
 
-See [Demon / DKEU3 integration](docs/en/demon-integration.md).
+Current macros include `PHOENIX_START`, `PHOENIX_END`, `PHOENIX_CLEAN_NOZZLE`, filament management, PID/Input Shaper calibration, probe/mesh/sensor diagnostics, and setup helpers.
+
+On August 23, 2026, the filament workflow was physically validated on the printer: `PHOENIX_LOAD_FILAMENT`, `PHOENIX_UNLOAD_FILAMENT`, `PHOENIX_FILAMENT_RUNOUT`, and `PHOENIX_FILAMENT_CHANGE` all completed their respective workflows correctly.
+
+`PHOENIX_PRESSURE_ADVANCE_TEST` was intentionally removed: Pressure Advance calibration is delegated to the slicer, avoiding a second redundant tower procedure.
+
+DKEU was used during an important stage of the Phoenix migration and remains a historical/upstream source that should be credited where appropriate, but **it is no longer an operational dependency of the current baseline**.
+
+See [Phoenix Macros](docs/phoenix-macros.md).
 
 ## Troubleshooting philosophy
 
@@ -149,9 +173,16 @@ The complete chronological migration history is preserved separately under:
 
 `docs/migration-history/phoenix/`
 
-It contains intermediate states, failed experiments, temporary workarounds, measurements, root-cause investigations, and final fixes.
+It contains:
 
-This history is useful for debugging and technical archaeology. It is **not** the recommended step-by-step installation guide and is currently maintained in Italian.
+- intermediate states;
+- failed experiments;
+- temporary workarounds;
+- measurements;
+- root-cause investigations;
+- final fixes.
+
+This history is useful for debugging and technical archaeology. It is **not** the recommended step-by-step installation procedure.
 
 ## Phoenix examples
 
@@ -159,7 +190,12 @@ Phoenix-specific examples are stored under:
 
 `examples/phoenix/`
 
-These may include hardware notes, OrcaSlicer profiles, project roadmap, and machine-specific values.
+These may include:
+
+- hardware notes;
+- OrcaSlicer profiles;
+- project roadmap;
+- machine-specific values.
 
 Do not assume these files can be copied unchanged to another SV08.
 
@@ -169,15 +205,32 @@ The repository separates three classes of calibration:
 
 ### Machine
 
-Examples: PID, stepper configuration, endstops, heaters.
+Examples:
+
+- PID;
+- stepper configuration;
+- endstops;
+- heaters.
 
 ### Bed / Z
 
-Examples: Eddy calibration, QGL, Z reference, mesh, first layer.
+Examples:
+
+- Eddy calibration;
+- QGL;
+- Z reference;
+- mesh;
+- first layer.
 
 ### Filament
 
-Examples: temperature, flow ratio, pressure advance, retraction, max volumetric speed.
+Examples:
+
+- temperature;
+- flow ratio;
+- pressure advance;
+- retraction;
+- max volumetric speed.
 
 See [Validation and calibration](docs/en/validation-and-calibration.md).
 
@@ -185,15 +238,39 @@ See [Validation and calibration](docs/en/validation-and-calibration.md).
 
 The community Mainline baseline is intentionally kept separate from later Phoenix hardware development.
 
-Future or machine-specific changes may include graphite bed, toolhead redesign, CAN bus, EBB36 / EBB42, enclosure modifications, SSR, insulation, and umbilical redesign.
+Future or machine-specific changes may include:
+
+- graphite bed;
+- toolhead redesign;
+- CAN bus;
+- EBB36 / EBB42;
+- enclosure modifications;
+- SSR;
+- insulation;
+- umbilical redesign.
 
 These modifications should not redefine the basic migration procedure.
 
 ## Repository rules
 
-Do not commit passwords, Wi-Fi credentials, tokens, private keys, SSH host keys, personal MCU dumps intended only for rollback, full private eMMC images, or machine-specific secrets.
+Do not commit:
 
-Before making a branch or release public, perform a privacy audit of current files, Git history, branches, tags, and release assets.
+- passwords;
+- Wi-Fi credentials;
+- tokens;
+- private keys;
+- SSH host keys;
+- personal MCU dumps intended only for rollback;
+- full private eMMC images;
+- machine-specific secrets.
+
+Before making a branch or release public, perform a privacy audit of:
+
+- current files;
+- Git history;
+- branches;
+- tags;
+- release assets.
 
 ## Firmware and binary artifacts
 
