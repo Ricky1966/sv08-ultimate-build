@@ -25,6 +25,7 @@ Documentazione community per migrare una **Sovol SV08** dallo stack software di 
 
 - configurazione CB1/Linux;
 - backup, flashing e recovery delle MCU;
+- sostituzione della toolhead originale con Sovol Zero Extruder Kit;
 - configurazione della stampante su Mainline;
 - supporto Eddy nativo di Klipper;
 - Phoenix Macros, sviluppate e validate durante la migrazione Phoenix;
