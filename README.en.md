@@ -243,7 +243,6 @@ The community Mainline baseline is intentionally kept separate from later Phoeni
 
 Future or machine-specific changes may include:
 
-- CAN bus;
 - enclosure modifications;
 - insulation;
 - umbilical redesign.
