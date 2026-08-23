@@ -1,10 +1,17 @@
-# Demon integration — DKEU3 on Sovol SV08 Mainline
+# DKEU / Demon integration — fase storica dello sviluppo Phoenix
 
-Ultima verifica delle fonti: **2026-08-10**.
+Ultima verifica delle fonti storiche: **2026-08-10**.
 
-## Scopo
+> [!IMPORTANT]
+> Questa pagina documenta una **fase precedente dello sviluppo Phoenix**.
+>
+> DKEU ha avuto un ruolo importante nel percorso di migrazione, ma **non è più una dipendenza runtime della configurazione Phoenix attuale**.
+>
+> La baseline corrente utilizza le [Phoenix Macros](phoenix-macros.md).
 
-Questa guida documenta l'integrazione di Demon Klipper Essentials Unified con una Sovol SV08 già migrata a:
+## Scopo storico
+
+Questa guida conserva la documentazione dell'integrazione di Demon Klipper Essentials Unified utilizzata durante una fase della migrazione Phoenix, quando la macchina era già migrata a:
 
 - Klipper Mainline;
 - MCU Mainline;
@@ -36,7 +43,7 @@ Al momento della verifica il progetto è nella generazione:
 
 DKEU è un progetto attivo.
 
-Per installazioni nuove usare sempre la documentazione e i file correnti upstream.
+Per chi desidera utilizzare DKEU indipendentemente da Phoenix, usare sempre la documentazione e i file correnti upstream.
 
 Non utilizzare una vecchia copia Phoenix come sorgente primaria.
 
@@ -517,8 +524,9 @@ L'integrazione Demon può essere considerata riuscita quando:
 - il primo layer reale è coerente;
 - nessun override legacy Sovol neutralizza macro DKEU correnti.
 
-## Passo successivo
+---
 
-Con Klipper, Eddy e Demon integrati:
+## Navigazione
 
-`docs/validation-and-calibration.md`
+← **Pagina precedente:** [Sovol Zero, CAN ed Eddy integrato](zero-toolhead-eddy-2026-08-17.md)
+→ **Pagina successiva:** [Phoenix Macros](phoenix-macros.md)

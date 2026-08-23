@@ -1,8 +1,19 @@
 # Phoenix — Sovol Zero toolhead, Eddy nativo e piatto in grafite
 
-Data sessione: **2026-08-17**
+Data della migrazione documentata: **2026-08-17**
 
-Stato documento: sessione quasi chiusa; resta da registrare il controllo finale a caldo `G28 + QGL + BED_MESH_CALIBRATE` previsto a fine serata.
+Ultima revisione del documento: **2026-08-23**.
+
+## Come leggere questa pagina
+
+Questa pagina nasce dal lavoro di migrazione della Phoenix alla **Sovol Zero Extruder Kit con CAN ed Eddy integrato** eseguito il 17 agosto 2026.
+
+Contiene due tipi di informazioni:
+
+- **configurazione tecnica che costituisce ancora la baseline Zero della Phoenix**, come MCU CAN, pin, configurazione Eddy e modifiche Mainline necessarie;
+- **risultati di test della sessione del 17 agosto**, conservati come dati storici di validazione e non come valori che ogni esecuzione successiva deve necessariamente riprodurre.
+
+Le successive evoluzioni del workflow di stampa e delle macro sono documentate nelle pagine Phoenix dedicate.
 
 ## Hardware / piattaforma
 
@@ -198,9 +209,9 @@ Dopo `RESTART`:
 - QGL: retries `2/5`, range `0.030720 mm`
 - rapid mesh completata normalmente
 
-Questa è al momento la configurazione stabile della Zero integrata su Phoenix.
+Questa configurazione costituì la baseline stabile della Zero integrata raggiunta nella sessione del 17 agosto ed è rimasta il punto di partenza delle validazioni successive.
 
-## Piatto in grafite — regolazione meccanica
+## Risultati del 17 agosto — regolazione meccanica del piatto in grafite
 
 La prima mesh mostrava chiaramente i quattro angoli depressi, compatibile con i fissaggi angolari troppo serrati.
 
@@ -213,7 +224,7 @@ A freddo si è arrivati a circa:
 
 Il risultato è stato considerato molto più regolare del piatto iniziale.
 
-## Validazione termica piatto grafite
+## Risultati del 17 agosto — validazione termica del piatto in grafite
 
 Condizione scelta:
 
@@ -241,7 +252,7 @@ Dopo ulteriore micro-regolazione del fissaggio X0 Y0 il miglior risultato pratic
 
 Il piatto non è perfettamente piatto, ma la forma è molto più regolare e utilizzabile rispetto allo stato iniziale “a taco”. Si è deciso di non continuare a inseguire la planarità meccanicamente oltre questo punto.
 
-## Mesh salvata
+## Mesh salvata nella sessione del 17 agosto
 
 La mesh a caldo da circa `0.190 mm` è stata salvata con `SAVE_CONFIG`.
 
@@ -256,7 +267,7 @@ Dopo il restart Phoenix è tornata `Ready`.
 - `/home/biqu/printer_data/config/printer-before-mesh-overshoot-zero-20260817.cfg`
 - `/home/biqu/printer_data/config/printer-before-zero-graphite-mesh-save-20260817.cfg`
 
-## Stato a fine sessione
+## Stato verificato a fine sessione del 17 agosto
 
 Funzionano:
 
@@ -272,10 +283,9 @@ Funzionano:
 - Eddy a 250 Hz senza il timeout QGL osservato a 400 Hz
 - mesh a caldo del piatto in grafite
 
-Da fare nella prossima sessione:
+---
 
-1. registrare il controllo finale dopo soak completo (`G28 + QGL + rapid mesh`) se non già annotato a chiusura serata;
-2. validare definitivamente Z offset / primo layer con Zero + Eddy + piatto grafite;
-3. verificare le macro Demon / START_PRINT con la nuova toolhead;
-4. solo dopo passare alla prima stampa reale;
-5. sistemare in seguito brush / `NOZZLE_CLEAN`, volutamente rimandati.
+## Navigazione
+
+- ← **Pagina precedente:** [Configurazione base Mainline](base-configuration.md)
+- → **Pagina successiva:** [Phoenix Macros](phoenix-macros.md)

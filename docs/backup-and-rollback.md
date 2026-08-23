@@ -6,12 +6,16 @@ Ultima verifica delle fonti: **2026-08-10**.
 
 Prima di modificare il sistema operativo, la eMMC o il firmware delle MCU, creare un percorso di ritorno verificabile.
 
-Per una migrazione SV08 verso Klipper Mainline considerare almeno quattro livelli distinti di backup:
+Per una migrazione della SV08 stock verso Klipper Mainline considerare almeno quattro livelli distinti di backup:
 
 1. configurazione Klipper e servizi;
 2. sistema Linux / eMMC;
 3. firmware originale mainboard MCU;
-4. firmware originale toolboard MCU.
+4. firmware originale toolboard MCU stock.
+
+Questi quattro livelli descrivono la macchina stock prima della migrazione.
+
+Se sulla propria SV08 è già installata una toolhead diversa, come la **Sovol Zero Extruder Kit**, salvare separatamente anche firmware, configurazione e identificativi della toolhead corrente.
 
 Questi backup non sono equivalenti fra loro.
 
@@ -26,7 +30,7 @@ Salvare almeno:
 - macro personalizzate;
 - `saved_variables.cfg`;
 - configurazioni Eddy;
-- configurazioni Demon;
+- Phoenix Macros e altre macro/configurazioni personalizzate;
 - `moonraker.conf`;
 - `mainsail.cfg`;
 - `KlipperScreen.conf`, se usato;
@@ -91,9 +95,11 @@ Il backup deve essere identificato almeno con:
 
 ## Livello 4 — Firmware originale toolboard MCU
 
-Applicare lo stesso principio alla toolboard.
+Questa sezione si riferisce alla **toolboard originale Sovol presente durante la migrazione iniziale della macchina stock**.
 
-Mainboard e toolboard devono essere trattate come due MCU distinte.
+Applicare lo stesso principio alla toolboard originale prima di sostituirla o modificarne il firmware.
+
+Mainboard e toolboard originale devono essere trattate come due MCU distinte.
 
 Non assumere che un solo dump copra entrambe.
 
@@ -208,7 +214,11 @@ Durante la migrazione reale usata per validare questa guida sono stati salvati e
 
 I file originali specifici della macchina Phoenix sono conservati localmente e non fanno parte della baseline pubblica del repository.
 
-La loro presenza nella cronologia tecnica serve solo a documentare che un rollback reale era disponibile.
+La configurazione Phoenix attuale utilizza una **Sovol Zero Extruder Kit collegata via CAN**.
+
+Il backup della Zero è quindi un elemento aggiuntivo rispetto ai quattro livelli riferiti alla SV08 stock: firmware, configurazione e identificativi CAN devono essere salvati separatamente quando si interviene sulla toolhead corrente.
+
+La presenza dei backup storici della macchina Phoenix serve solo a documentare che durante la migrazione era disponibile un rollback reale.
 
 ## Criterio di uscita
 
@@ -217,13 +227,14 @@ Non procedere alla fase di installazione Mainline finché non sono vere tutte qu
 - configurazioni salvate;
 - sistema stock recuperabile;
 - mainboard MCU recuperabile;
-- toolboard MCU recuperabile;
+- toolboard originale MCU recuperabile;
 - checksum disponibili;
 - backup conservati fuori dalla stampante;
 - ST-Link disponibile e utilizzabile.
 
-## Passo successivo
+---
 
-Dopo aver completato e verificato il backup:
+## Navigazione
 
-`docs/install-cb1-mainline.md`
+- ← **Pagina precedente:** [Getting started](getting-started.md)
+- → **Pagina successiva:** [Installazione CB1 e Klipper Mainline](install-cb1-mainline.md)

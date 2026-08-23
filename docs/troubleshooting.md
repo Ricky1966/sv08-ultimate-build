@@ -1,6 +1,6 @@
 # Troubleshooting — Sovol SV08 Mainline migration
 
-Ultima revisione: **2026-08-10**.
+Ultima revisione: **2026-08-23**.
 
 ## Scopo
 
@@ -38,7 +38,7 @@ identificare il livello in cui nasce realmente il problema.
 Quando la macchina non funziona correttamente, verificare nell'ordine:
 
 1. Linux/CB1;
-2. USB;
+2. USB/CAN;
 3. MCU;
 4. configurazione Klipper;
 5. endstop;
@@ -46,7 +46,7 @@ Quando la macchina non funziona correttamente, verificare nell'ordine:
 7. Eddy;
 8. QGL;
 9. mesh;
-10. Demon;
+10. Phoenix Macros;
 11. slicer;
 12. first layer.
 
@@ -136,7 +136,7 @@ Quando le MCU stock espongono lo stesso seriale generico, usare temporaneamente:
 
 per distinguerle fisicamente prima del flash.
 
-## Mainboard e toolboard risultano scambiate
+## Mainboard e toolboard USB originale risultano scambiate
 
 ### Sintomi possibili
 
@@ -148,9 +148,13 @@ per distinguerle fisicamente prima del flash.
 
 ### Verificare
 
+Nella configurazione storica con toolboard USB originale:
+
 - seriale configurato in `[mcu]`;
 - seriale configurato in `[mcu extra_mcu]`;
 - corrispondenza fisica con la scheda.
+
+Con la Sovol Zero attuale verificare invece UUID CAN e stato della MCU toolhead CAN.
 
 ### Soluzione
 
@@ -236,34 +240,44 @@ Nel percorso homing, eseguire eventuali sollevamenti Z solo quando:
 
 ### Verificare
 
+- hardware Eddy realmente installato;
 - calibrazione Eddy;
-- frequenza massima osservata;
+- frequenza osservata;
 - `max_sensor_hz`;
 - I2C;
 - alimentazione;
-- cablaggio.
+- cablaggio;
+- eventuali modifiche locali del driver LDC1612.
 
-### Caso Phoenix
+### Phoenix corrente — Sovol Zero
 
-La curva calibrata arrivava a circa:
+Con la Eddy integrata nella Sovol Zero, la configurazione Phoenix validata utilizza:
 
-`8.523 MHz`
+`max_sensor_hz: 7000000`
 
-Il limite disponibile inizialmente era insufficiente.
+Con il clock Mainline utilizzato sulla Phoenix questo porta il LDC1612 al divider 3.
 
-### Soluzione Phoenix
+Durante la migrazione Zero, con divider 2 la calibrazione poteva completare ma `G28 Z` produceva:
 
-È stato impostato:
+`Trigger analog error: RAW_RANGE`
+
+Con divider 3 il problema è scomparso.
+
+La configurazione completa è documentata nella pagina:
+
+[Sovol Zero toolhead, CAN ed Eddy integrato](zero-toolhead-eddy-2026-08-17.md)
+
+### Storico — precedente Eddy NG
+
+Prima della Sovol Zero, la precedente configurazione Eddy NG Phoenix aveva mostrato frequenze fino a circa `8.523 MHz` ed era stato utilizzato:
 
 `max_sensor_hz: 9000000`
 
-Dopo questa modifica `G28 Z` ha funzionato correttamente.
+Quel valore appartiene alla **vecchia Eddy NG** e non deve essere trasferito alla Zero.
 
 ### Cosa non fare
 
-Non copiare `9000000` automaticamente su ogni macchina.
-
-Il valore deve essere coerente con la frequenza realmente osservata.
+Non copiare `7000000`, `9000000` o altri valori da una configurazione diversa senza verificare hardware, driver e frequenza realmente osservata.
 
 ## Eddy instabile o rumoroso
 
@@ -303,12 +317,12 @@ Fu applicata temporaneamente una condizione più restrittiva.
 
 ### Stato corrente
 
-Quella patch non deve essere applicata automaticamente a DKEU corrente.
+Quella patch appartiene alla fase storica DKEU e non deve essere applicata automaticamente ad altre configurazioni.
 
 Usare:
 
 - Klipper Mainline corrente;
-- DKEU corrente;
+- versione DKEU utilizzata, se si sta analizzando una configurazione storica o indipendente da Phoenix;
 - calibrazione TAP corrente se TAP è realmente desiderato.
 
 ### Cosa non fare
@@ -329,7 +343,7 @@ da configurazioni Eddy NG legacy.
 - gantry corners;
 - `max_adjust`;
 - coordinate probe;
-- wrapper Demon;
+- eventuale wrapper Demon presente nella configurazione storica analizzata;
 - configurazione realmente caricata.
 
 ### Caso Phoenix
@@ -367,7 +381,7 @@ Non garantisce da solo:
 - probe;
 - mesh;
 - Z reference;
-- percorso Demon;
+- eventuale percorso Demon della configurazione storica;
 - slicer.
 
 # Mesh
@@ -409,7 +423,7 @@ Una mesh deve rappresentare la superficie reale.
 - QGL;
 - probe;
 - compensazioni residue;
-- wrapper Demon;
+- eventuale wrapper Demon presente nella configurazione storica analizzata;
 - metodo `scan` / `rapid_scan`;
 - coordinate.
 
@@ -427,7 +441,13 @@ Non confrontare direttamente:
 come se fossero equivalenti.
 
 
-# Demon / DKEU
+# Problemi storici DKEU / Demon
+
+Le sezioni seguenti descrivono problemi realmente incontrati quando Phoenix utilizzava ancora DKEU.
+
+Sono mantenute per valore diagnostico e storico, ma **DKEU non fa parte della baseline runtime Phoenix attuale**.
+
+Per la configurazione corrente fare riferimento alle Phoenix Macros.
 
 ## Emergency shutdown subito all'avvio stampa
 
@@ -485,7 +505,7 @@ sufficiente a compromettere un first layer da `0.20 mm`.
 
 ### Soluzione
 
-Rimuovere l'override legacy e lasciare attiva la macro DKEU corrente.
+Nella configurazione storica Phoenix, la correzione consistette nel rimuovere l'override legacy e lasciare operativa la macro DKEU allora prevista.
 
 ### Cosa non fare
 
@@ -499,7 +519,7 @@ Non correggere la situazione modificando:
 
 prima di aver verificato la macro realmente eseguita.
 
-## DKEU sembra comportarsi diversamente dai test manuali
+## Storico — DKEU si comportava diversamente dai test manuali
 
 ### Verificare
 
@@ -570,10 +590,13 @@ Il valore realmente eseguito è quello che conta.
 ### Verificare
 
 - riferimento Z;
-- `_APPLY_EDDY_Z_OFFSET`;
-- probe;
-- mesh attiva;
-- eventuale babystep residuo.
+- homing Z;
+- probe Eddy corrente;
+- mesh realmente attiva;
+- eventuale offset o babystep residuo;
+- macro Phoenix effettivamente eseguite.
+
+`_APPLY_EDDY_Z_OFFSET` apparteneva alla precedente integrazione DKEU ed è trattata nella sezione storica, non nel runtime Phoenix Macros corrente.
 
 ### Non iniziare da
 
@@ -638,7 +661,7 @@ Durante la migrazione Phoenix è stata osservata una possibile condizione logica
 
 Non è stata dimostrata come causa del print fallito.
 
-Non applicare patch senza riproduzione concreta sulla versione DKEU corrente.
+Non applicare patch storiche senza una riproduzione concreta sulla configurazione che si sta analizzando.
 
 ## Rilevamento `probe_eddy_current eddy`
 
@@ -646,26 +669,26 @@ In uno snapshot storico una condizione sembrava considerare esplicitamente `prob
 
 Anche questo punto non è stato dimostrato come causa reale.
 
-Prima di intervenire verificare sempre il codice DKEU corrente.
+Se si utilizza DKEU indipendentemente dalla baseline Phoenix, verificare sempre il codice della versione realmente installata.
 
 # Toolhead / cablaggio
 
-## Cavo toolhead sfiora il telaio posteriore
+## Cablaggio toolhead sfiora il telaio posteriore
 
 ### Verificare
 
-- lunghezza utile USB;
-- catena;
-- umbilical;
+- cablaggio della toolhead realmente installata;
+- cavo CAN / umbilical nella configurazione Zero corrente;
+- eventuale catena nella configurazione storica;
 - PTFE;
 - posizione massima Y;
 - libertà di movimento.
 
 ### Caso Phoenix
 
-Il fascio toolhead poteva sfiorare il telaio posteriore.
+Nella precedente configurazione con toolboard originale, il fascio toolhead poteva sfiorare il telaio posteriore e venne rimosso un elemento della catena per recuperare lunghezza utile.
 
-In precedenza era già stato rimosso un elemento della catena per recuperare lunghezza utile.
+Con la Sovol Zero va invece verificato il percorso fisico dell'umbilical/CAN attuale senza riutilizzare automaticamente le conclusioni geometriche della vecchia toolhead.
 
 ### Cosa non fare
 
@@ -682,7 +705,7 @@ Quando la stampante passa da "funzionante" a "stampa male":
 5. verificare `PROBE`;
 6. verificare QGL;
 7. verificare mesh;
-8. verificare macro DKEU realmente caricate;
+8. nella configurazione storica DKEU, verificare le macro realmente caricate;
 9. verificare preset Orca;
 10. verificare G-code reale;
 11. ristampare lo stesso file dopo una sola correzione.
@@ -691,8 +714,8 @@ Quando la stampante passa da "funzionante" a "stampa male":
 
 Spostare l'attenzione su:
 
-- macro;
-- Z realignment;
+- macro effettivamente eseguite;
+- riferimento/homing Z;
 - slicer;
 - start G-code.
 
@@ -726,7 +749,8 @@ Le cause realmente confermate durante la migrazione includono:
 
 - uso non sicuro di identificativi MCU dinamici;
 - vecchio plugin Eddy NG incompatibile con il percorso homing Mainline;
-- limite `max_sensor_hz` insufficiente per il sensore Phoenix;
+- limite `max_sensor_hz` insufficiente nella precedente configurazione Eddy NG;
+- divider/frequenza LDC1612 non adatti durante la migrazione della Eddy integrata nella Zero, risolti con la configurazione Zero documentata;
 - selezione TAP incompatibile nella versione DKEU storica;
 - axis twist compensation legacy che falsava la mesh;
 - profilo macchina Orca errato;
@@ -755,11 +779,12 @@ Se il problema resta irrisolto, raccogliere almeno:
 
 - versione Klipper;
 - commit Klipper;
-- versione DKEU;
+- versione DKEU, quando si analizza una vecchia configurazione basata su Demon;
 - configurazione attiva;
 - `klippy.log`;
 - `moonraker.log` se pertinente;
-- seriali MCU;
+- identificativi MCU USB e, quando presente, UUID CAN della toolhead;
+- stato del bus CAN se pertinente;
 - output homing;
 - output probe;
 - output QGL;
@@ -769,10 +794,9 @@ Se il problema resta irrisolto, raccogliere almeno:
 
 Una diagnosi riproducibile vale più di molte regolazioni casuali.
 
-# Passo successivo
+---
 
-Dopo il troubleshooting:
+## Navigazione
 
-`README.md`
-
-deve diventare l'indice community definitivo del repository.
+- ← **Pagina precedente:** [Validazione e calibrazione](validation-and-calibration.md)
+- → **Pagina successiva:** [README](../README.md)

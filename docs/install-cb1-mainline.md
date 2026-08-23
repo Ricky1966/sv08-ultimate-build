@@ -1,6 +1,6 @@
 # Install CB1 Linux and Klipper Mainline on Sovol SV08
 
-Ultima verifica delle fonti: **2026-08-10**.
+Ultima verifica delle fonti: **2026-08-23**.
 
 ## Scopo
 
@@ -8,7 +8,7 @@ Questa sezione documenta il passaggio dal sistema Linux stock della Sovol SV08 a
 
 La procedura segue come riferimento principale:
 
-`Rappetor/Sovol-SV08-Mainline`
+[Rappetor/Sovol-SV08-Mainline](https://github.com/Rappetor/Sovol-SV08-Mainline)
 
 La macchina Phoenix è stata migrata usando questo percorso come base, con verifiche aggiuntive documentate in questo repository.
 
@@ -16,7 +16,7 @@ La macchina Phoenix è stata migrata usando questo percorso come base, con verif
 
 Prima di continuare deve essere stato completato:
 
-`docs/backup-and-rollback.md`
+[Backup and rollback](backup-and-rollback.md)
 
 Non procedere se il sistema stock non è recuperabile.
 
@@ -36,18 +36,24 @@ Preferire l'immagine **minimal**, evitando immagini con versioni preinstallate e
 
 ## Dove installare il nuovo sistema
 
-Sono possibili diversi approcci:
+La guida upstream consente diversi approcci:
 
 - nuova eMMC dedicata;
 - eMMC originale dopo averne creato un backup completo;
-- microSD per test o uso permanente;
+- microSD;
 - installazione tramite USB/FEL secondo la procedura upstream.
 
-Per un primo tentativo, mantenere fisicamente intatto un supporto stock avviabile è la soluzione con il rollback più semplice.
+Per il percorso Phoenix documentato in questo repository, la **prima migrazione e validazione viene eseguita da MicroSD**, mantenendo intatta la eMMC stock.
+
+Questa scelta rende più semplice interrompere il test, sostituire il supporto o tornare al sistema originale senza riscrivere immediatamente la eMMC.
+
+La MicroSD non viene presentata come intrinsecamente più affidabile della eMMC per l'uso permanente: viene scelta come supporto iniziale soprattutto per semplicità di test e rollback.
 
 ## Preparazione del supporto
 
-Dopo aver scritto l'immagine CB1 V2.3.4 minimal sul supporto, la partizione `BOOT` deve essere accessibile dal computer.
+Dopo aver scritto l'immagine CB1 V2.3.4 minimal sulla **MicroSD usata per la prima migrazione Phoenix**, la partizione `BOOT` deve essere accessibile dal computer.
+
+Le stesse modifiche di configurazione valgono anche quando si segue uno degli altri metodi upstream compatibili.
 
 Prima di modificare qualsiasi file:
 
@@ -145,7 +151,7 @@ Se si usa una microSD insieme a una eMMC presente, verificare con `lsblk` quale 
 
 Questo evita di configurare accidentalmente un sistema diverso da quello che si crede di aver avviato.
 
-## Passo successivo
+## Stack software da installare
 
 Con Linux avviato e SSH funzionante si può procedere all'installazione di:
 
@@ -178,7 +184,7 @@ KIAUH viene utilizzato come gestore di installazione per lo stack Klipper.
 
 Repository upstream:
 
-`dw-0/kiauh`
+[dw-0/kiauh](https://github.com/dw-0/kiauh)
 
 Installare KIAUH seguendo le istruzioni correnti del progetto ufficiale.
 
@@ -283,27 +289,30 @@ Recuperare invece in modo controllato:
 - ventole;
 - macro realmente necessarie.
 
-Le macro legacy e le integrazioni Eddy devono essere valutate separatamente.
+Le macro legacy, le vecchie integrazioni Eddy e gli eventuali componenti DKEU della configurazione precedente devono essere valutati separatamente e non importati automaticamente nella baseline Phoenix.
 
 ## Configurazione iniziale
 
 Prima del flashing delle MCU preparare una configurazione minima che permetta successivamente di verificare:
 
 - connessione mainboard;
-- connessione toolboard;
+- connessione della toolboard originale durante la fase stock;
 - temperature;
 - endstop;
 - stepper;
 - ventole;
 - probe.
 
+La successiva installazione della **Sovol Zero Extruder Kit** introduce una toolhead CAN distinta dalla toolboard USB originale e viene documentata separatamente.
+
 Non considerare ancora questa configurazione definitiva.
 
 La configurazione verrà raffinata nelle sezioni dedicate a:
 
 - MCU;
-- Eddy;
-- Demon;
+- Sovol Zero e CAN;
+- Eddy nativo integrato nella Zero;
+- Phoenix Macros;
 - calibrazione.
 
 ## Criterio di uscita
@@ -320,9 +329,9 @@ Prima di passare al firmware MCU devono essere vere tutte queste condizioni:
 - configurazioni stock disponibili come riferimento;
 - backup e rollback già verificati.
 
-## Passo successivo
+---
 
-La fase successiva è il backup e flashing controllato delle MCU:
+## Navigazione
 
-`docs/flash-mcus.md`
-
+- ← **Pagina precedente:** [Backup and rollback](backup-and-rollback.md)
+- → **Pagina successiva:** [Flashing e recovery MCU](flash-mcus.md)

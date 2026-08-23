@@ -2,17 +2,19 @@
 
 ## Stato
 
-Phoenix Macros è il layer di macro attivo della Sovol SV08 “Phoenix”.
+Phoenix Macros costituisce il layer di macro attivo della Sovol SV08 “Phoenix”.
 
 La baseline corrente è:
 
 - Klipper Mainline;
+- Sovol Zero Extruder Kit via CAN;
+- Eddy integrato tramite supporto nativo Klipper;
 - Phoenix Macros;
 - componenti esterni esplicitamente attribuiti dove ancora utilizzati.
 
 **DKEU non è più una dipendenza runtime della configurazione Phoenix.**
 
-Il 22 agosto 2026 è stato completato l'audit finale del runtime attivo sulla macchina:
+Il 22 agosto 2026 è stato completato l'audit strutturale del runtime attivo sulla macchina; la validazione funzionale è stata completata il 23 agosto 2026:
 
 - nessun include DKEU attivo in `printer.cfg`;
 - nessun riferimento operativo DKEU nei file `phoenix-*.cfg`;
@@ -344,3 +346,10 @@ Il packaging deve:
 - conservare la distinzione tra macro strutturalmente caricate e macro fisicamente validate.
 
 I file `.cfg` effettivamente attivi sulla CB1 costituiscono la fonte runtime di riferimento e devono essere mantenuti sincronizzati con il packaging Phoenix pubblicato nel repository.
+
+---
+
+## Navigazione
+
+- ← **Pagina precedente:** [Sovol Zero, CAN ed Eddy integrato](zero-toolhead-eddy-2026-08-17.md)
+- → **Pagina successiva:** [Validazione e calibrazione](validation-and-calibration.md)

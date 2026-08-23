@@ -219,12 +219,9 @@ Ogni passaggio dovrebbe essere interpretato secondo una delle seguenti categorie
 
 Questa distinzione serve a evitare che una personalizzazione della macchina di test venga scambiata per requisito generale.
 
-## Passo successivo
+---
 
-Prima di installare software o flashare una MCU:
+## Navigazione
 
-**creare e verificare il backup.**
-
-Continua con:
-
-`docs/backup-and-rollback.md`
+← **Pagina precedente:** [README](../README.md)
+→ **Pagina successiva:** [Backup and rollback](backup-and-rollback.md)

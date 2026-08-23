@@ -1,15 +1,15 @@
 # Base configuration — Sovol SV08 on Klipper Mainline
 
-Ultima verifica delle fonti: **2026-08-10**.
+Ultima revisione: **2026-08-23**.
 
 ## Scopo
 
 Questa fase costruisce una configurazione Klipper Mainline minima e controllabile prima di integrare:
 
-- Eddy;
-- Demon;
+- Sovol Zero Extruder Kit e collegamento CAN;
+- Eddy nativo integrato nella Zero;
 - mesh;
-- macro avanzate;
+- Phoenix Macros;
 - calibrazioni slicer;
 - modifiche hardware non necessarie alla migrazione.
 
@@ -21,11 +21,13 @@ L'obiettivo è recuperare solo i parametri hardware realmente necessari e verifi
 
 Devono essere già completati:
 
-- `docs/backup-and-rollback.md`
-- `docs/install-cb1-mainline.md`
-- `docs/flash-mcus.md`
+- [Backup and rollback](backup-and-rollback.md)
+- [Installazione CB1 e Klipper Mainline](install-cb1-mainline.md)
+- [Flashing e recovery MCU](flash-mcus.md)
 
-Entrambe le MCU devono risultare raggiungibili da Klipper Mainline.
+In questa fase della migrazione stock, mainboard e toolboard originale devono risultare raggiungibili da Klipper Mainline.
+
+La Sovol Zero CAN viene introdotta nella fase successiva.
 
 ## Regola fondamentale
 
@@ -54,12 +56,14 @@ Evitare configurazioni permanenti basate su:
 - `/dev/ttyACM0`
 - `/dev/ttyACM1`
 
-Verificare che:
+Durante la fase iniziale con hardware stock verificare che:
 
 - `[mcu]` corrisponda alla mainboard;
-- la seconda MCU corrisponda realmente alla toolboard.
+- l'eventuale seconda MCU USB corrisponda realmente alla toolboard originale.
 
 Non dedurre l'identità della MCU dall'ordine di enumerazione USB.
+
+La configurazione Phoenix attuale utilizza invece la **Sovol Zero Extruder Kit via CAN**, con una MCU toolhead identificata tramite UUID CAN.
 
 ## Parametri stepper
 
@@ -113,7 +117,7 @@ Recuperare dalla configurazione stock e dall'hardware effettivamente installato:
 
 Se l'hotend o l'estrusore sono stati modificati, non considerare i valori Phoenix come baseline universale.
 
-## Phoenix verified — estrusore
+## Storico Phoenix — estrusore precedente alla Sovol Zero
 
 Durante la fase di calibrazione Phoenix risultavano:
 
@@ -125,11 +129,11 @@ Durante la fase di calibrazione Phoenix risultavano:
 - `pressure_advance: 0.025`
 - `pressure_advance_smooth_time: 0.035`
 
-Questi valori descrivono una macchina con hardware specifico e non devono essere copiati automaticamente.
+Questi valori descrivono una fase precedente della macchina Phoenix, prima della baseline Sovol Zero attuale, e non devono essere copiati automaticamente.
 
 La calibrazione materiale definitiva viene trattata separatamente.
 
-## Firmware retraction
+## Storico Phoenix — firmware retraction
 
 Phoenix disponeva di:
 
@@ -202,11 +206,11 @@ Se la direzione è errata, correggere la configurazione prima di continuare.
 
 In questa fase non definire ancora il comportamento definitivo di homing Z.
 
-La Phoenix è passata da una configurazione legacy Eddy NG al supporto Eddy nativo Mainline.
+La Phoenix è passata prima dalla vecchia Eddy NG e successivamente alla **Eddy integrata nella Sovol Zero** tramite supporto nativo Mainline.
 
-Il percorso Z viene quindi trattato esclusivamente in:
+Il percorso attuale Zero + Eddy è documentato in:
 
-`docs/native-eddy.md`
+[Sovol Zero toolhead, CAN ed Eddy integrato](zero-toolhead-eddy-2026-08-17.md)
 
 Evitare workaround temporanei come:
 
@@ -231,9 +235,9 @@ solo per "far passare" QGL.
 
 Un QGL che richiede correzioni eccessive può indicare un problema meccanico o una configurazione errata.
 
-## Phoenix verified — QGL consolidato
+## Storico Phoenix — QGL prima della Sovol Zero
 
-La configurazione finale Phoenix utilizza:
+Prima dell'installazione definitiva della Sovol Zero, la configurazione Phoenix utilizzava:
 
 - gantry corners: `(-60,-10)` e `(410,420)`
 - points:
@@ -249,13 +253,13 @@ La configurazione finale Phoenix utilizza:
 
 `max_adjust` era stato ridotto da `30` a `4` come misura di sicurezza.
 
-Con Eddy nativo e macchina a caldo questa configurazione ha completato QGL con:
+Con la precedente configurazione Eddy nativa e macchina a caldo, questo setup aveva completato QGL con:
 
 - retries: `3/5`
 - probed points range: circa `0.018 mm`
 - tolerance: `0.050 mm`
 
-Questi valori rappresentano il risultato verificato sulla Phoenix e non sono un requisito universale.
+Questi valori documentano quella specifica fase della Phoenix e non devono essere interpretati come risultato QGL della configurazione Zero corrente né come requisito universale.
 
 
 ## Homing X e Y
@@ -371,7 +375,7 @@ Non importare ancora automaticamente:
 - mesh wrapper;
 - pause/resume personalizzati;
 - macro Eddy;
-- macro Demon.
+- vecchie macro DKEU/Demon.
 
 Queste macro possono contenere dipendenze da:
 
@@ -416,11 +420,11 @@ La mesh dipende da:
 
 La configurazione mesh viene trattata dopo l'integrazione Eddy nativa.
 
-## Cosa deve funzionare prima di Eddy
+## Cosa deve funzionare prima di Zero ed Eddy
 
-Prima di passare al probe devono essere verificati:
+Prima di passare all'installazione della Zero e alla configurazione del relativo probe Eddy devono essere verificati:
 
-- entrambe le MCU;
+- mainboard e toolboard originale della fase stock;
 - temperature;
 - heater;
 - ventole;
@@ -446,7 +450,7 @@ A questo punto possono ancora cambiare:
 - tap;
 - QGL workflow;
 - start print;
-- Demon;
+- Phoenix Macros;
 - purge;
 - nozzle cleaning;
 - material calibration.
@@ -455,12 +459,12 @@ Questo è normale.
 
 La configurazione base serve a dimostrare che la macchina è controllabile in sicurezza prima di aggiungere automazioni e compensazioni.
 
-## Phoenix verified — stato prima della fase Eddy finale
+## Storico Phoenix — stato prima della migrazione definitiva a Zero ed Eddy
 
-Sulla Phoenix, prima di completare la migrazione Eddy nativa, erano già stati verificati:
+Sulla Phoenix, nella fase precedente all'installazione definitiva della Zero, erano già stati verificati:
 
 - MCU Mainline;
-- comunicazione mainboard/toolboard;
+- comunicazione mainboard/toolboard originale;
 - assi;
 - temperature;
 - endstop;
@@ -474,11 +478,11 @@ Questa distinzione ha permesso di evitare modifiche casuali a motori, gantry o c
 
 ## Criterio di uscita
 
-Prima di passare a Eddy devono essere vere tutte queste condizioni:
+Prima di passare alla Sovol Zero e alla relativa Eddy devono essere vere tutte queste condizioni:
 
-- working configuration senza errori hardware base;
+- configurazione funzionante senza errori hardware di base;
 - mainboard correttamente identificata;
-- toolboard correttamente identificata;
+- toolboard originale correttamente identificata;
 - temperature plausibili;
 - heater verificati;
 - ventole verificate;
@@ -488,8 +492,9 @@ Prima di passare a Eddy devono essere vere tutte queste condizioni:
 - nessuna macro legacy necessaria al semplice controllo della macchina;
 - backup ancora disponibile.
 
-## Passo successivo
+---
 
-Integrare il probe Eddy usando il supporto nativo Klipper Mainline:
+## Navigazione
 
-`docs/native-eddy.md`
+- ← **Pagina precedente:** [Flashing e recovery MCU](flash-mcus.md)
+- → **Pagina successiva:** [Sovol Zero, CAN ed Eddy integrato](zero-toolhead-eddy-2026-08-17.md)
