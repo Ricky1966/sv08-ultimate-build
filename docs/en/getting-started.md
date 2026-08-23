@@ -164,7 +164,7 @@ Do not treat a simple backup of `.cfg` files as equivalent to a complete rollbac
 
 Before modifying or flashing the MCUs, it is strongly recommended to keep a verified copy of the original firmware from your own mainboard and toolboard.
 
-The original dumps from the machine used for this project are not distributed in the community baseline.
+The original machine-specific Phoenix dumps are not required to follow this procedure.
 
 Each user must save their own backups.
 

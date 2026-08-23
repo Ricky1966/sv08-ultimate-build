@@ -158,7 +158,7 @@ Nella stessa fase Phoenix risultavano salvati:
 
 Anche questi valori sono hardware-specifici.
 
-Non usarli come preset community.
+Non usarli come preset universale.
 
 ## Cambio piatto
 
@@ -531,7 +531,7 @@ Durante la calibrazione PolyTerra della precedente configurazione FlowTech:
 
 La retraction utilizzata in quella configurazione è stata quindi mantenuta come valore validato per quella fase.
 
-Il valore esatto non viene promosso a preset community perché dipende dal percorso realmente usato dal profilo slicer.
+Il valore esatto non viene proposto come preset universale perché dipende dal percorso realmente usato dal profilo slicer.
 
 ## Max Volumetric Speed
 

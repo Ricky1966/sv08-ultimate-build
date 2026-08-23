@@ -160,7 +160,7 @@ During the same Phoenix stage, saved values were:
 
 These are also hardware-specific.
 
-Do not use them as community presets.
+Do not use them as universal presets.
 
 ## Bed replacement
 
@@ -526,7 +526,7 @@ During PolyTerra calibration of the previous FlowTech configuration:
 
 The retraction used in that configuration was therefore kept as a validated value for that phase.
 
-The exact value is not promoted as a community preset because it depends on the path actually used by the slicer profile.
+The exact value is not proposed as a universal preset because it depends on the path actually used by the slicer profile.
 
 ## Max Volumetric Speed
 

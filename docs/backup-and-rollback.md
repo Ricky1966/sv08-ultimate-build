@@ -103,7 +103,7 @@ Anche il backup toolboard deve riportare:
 
 ## ST-Link
 
-Per il percorso documentato in questo repository è fortemente raccomandato avere uno ST-Link disponibile prima di iniziare il flashing.
+Per questa procedura è fortemente raccomandato avere uno ST-Link disponibile prima di iniziare il flashing.
 
 Lo ST-Link serve come percorso di recupero quando:
 
@@ -190,7 +190,7 @@ Non:
 - affidarsi a un singolo file `printer.cfg`;
 - usare firmware originali scaricati da terzi come unico piano di recupero;
 - iniziare il flashing senza aver verificato i file appena creati;
-- pubblicare dump personali o immagini eMMC senza una revisione privacy e sicurezza.
+- condividere dump personali o immagini eMMC senza aver rimosso credenziali e dati sensibili.
 
 ## Backup verificato sulla macchina Phoenix
 
@@ -201,8 +201,6 @@ Durante la migrazione reale usata per validare questa guida sono stati salvati e
 - backup del sistema;
 - configurazioni Klipper;
 - checksum SHA256.
-
-I file originali specifici della macchina Phoenix sono conservati localmente e non fanno parte della baseline pubblica del repository.
 
 La configurazione Phoenix attuale utilizza una **Sovol Zero Extruder Kit collegata via CAN**.
 

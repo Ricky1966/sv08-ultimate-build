@@ -450,18 +450,11 @@ After an update:
 
 Do not assume a configuration that was perfect on a previous version remains automatically valid after an update.
 
-## Do not freeze core assets in this community repository
+## Relationship with upstream DKEU
 
-This repository should not become a static copy of DKEU.
+DKEU remains an independent upstream project.
 
-The community baseline should:
-
-- point to the upstream repository;
-- document SV08 parameters;
-- document incompatibilities encountered;
-- keep Phoenix examples separate.
-
-Demon core files belong to the Demon project.
+Historical Phoenix configurations only document the parameters and incompatibilities encountered on the SV08; Demon core files should be obtained and updated from the upstream project.
 
 ## Orca validation
 

@@ -4,7 +4,7 @@
 
 This page is kept as a compatibility entry point for older links.
 
-The Sovol SV08 to Klipper Mainline migration procedure is now split across the following community guides.
+The Sovol SV08 to Klipper Mainline migration procedure is now split across the following operational guides.
 
 ## Recommended path
 
@@ -38,7 +38,7 @@ The detailed Phoenix machine history is preserved separately under:
 
 `docs/migration-history/phoenix/`
 
-That history records the real development and debugging path, but it must not be used as a linear community procedure. It is currently maintained in Italian.
+That history records the real development and debugging path, but it must not be used as a linear operational procedure. It is currently maintained in Italian.
 
 ---
 

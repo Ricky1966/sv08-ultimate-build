@@ -2,7 +2,7 @@
 
 Questa pagina è mantenuta come punto di compatibilità per i vecchi link.
 
-La procedura di migrazione Sovol SV08 a Klipper Mainline è ora suddivisa nelle guide community seguenti.
+La procedura di migrazione Sovol SV08 a Klipper Mainline è ora suddivisa nelle guide operative seguenti.
 
 ## Percorso consigliato
 
@@ -36,7 +36,7 @@ La cronologia dettagliata della macchina Phoenix è conservata separatamente in:
 
 `docs/migration-history/phoenix/`
 
-Quella cronologia documenta il percorso reale di sviluppo e debugging, ma non deve essere usata come procedura community lineare.
+Quella cronologia documenta il percorso reale di sviluppo e debugging, ma non deve essere usata come procedura operativa lineare.
 
 ---
 

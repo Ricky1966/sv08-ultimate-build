@@ -449,18 +449,11 @@ Dopo un update:
 
 Non assumere che una configurazione perfetta con una versione precedente resti automaticamente valida dopo un update.
 
-## Non congelare i core assets nel repository community
+## Rapporto con DKEU upstream
 
-Questo repository non deve diventare una copia statica di DKEU.
+DKEU rimane un progetto upstream indipendente.
 
-La baseline community deve:
-
-- riferirsi al repository upstream;
-- documentare i parametri SV08;
-- documentare le incompatibilità incontrate;
-- conservare esempi Phoenix separati.
-
-I file core Demon appartengono al progetto Demon.
+Le configurazioni Phoenix storiche documentano soltanto i parametri e le incompatibilità incontrate sulla SV08; i file core Demon devono essere ottenuti e aggiornati dal progetto upstream.
 
 ## Validazione Orca
 

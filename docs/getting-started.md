@@ -163,7 +163,7 @@ Non considerare un semplice backup dei file `.cfg` equivalente a un rollback com
 
 Prima di modificare o flashare le MCU è fortemente raccomandato avere una copia verificata del firmware originale della propria mainboard e della propria toolboard.
 
-I dump originali della macchina usata per questo progetto non vengono distribuiti nella baseline community.
+I dump originali specifici della macchina Phoenix non sono necessari per seguire questa procedura.
 
 Ogni utente deve salvare i propri backup.
 
