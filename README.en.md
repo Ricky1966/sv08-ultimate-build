@@ -57,7 +57,10 @@ A compatibility index for older links is also available:
 
 ## Read this before flashing anything
 
-Do **not** start by erasing or flashing the MCU boards.
+> [!WARNING]
+> **Do not start by erasing or flashing the MCU boards.**
+>
+> For additional safety, the initial Phoenix migration work was performed from **MicroSD rather than directly from eMMC**. A MicroSD card does not necessarily provide the same reliability or lifespan as a good eMMC module, but it has an important practical advantage: if something goes wrong, it can be replaced quickly and cheaply with readily available media, without depending on the lead times or replacement cost of a compatible eMMC module. This makes MicroSD particularly useful as a test, recovery, and initial-migration medium.
 
 Before changing firmware, complete at least:
 
