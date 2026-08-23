@@ -26,6 +26,7 @@ Documentazione community per migrare una **Sovol SV08** dallo stack software di 
 - configurazione CB1/Linux;
 - backup, flashing e recovery delle MCU;
 - sostituzione della toolhead originale con Sovol Zero Extruder Kit;
+- sostituzione del piatto originale con piatto R3men in grafite;
 - configurazione della stampante su Mainline;
 - supporto Eddy nativo di Klipper;
 - Phoenix Macros, sviluppate e validate durante la migrazione Phoenix;
@@ -43,11 +44,12 @@ Se stai migrando una Sovol SV08, segui le guide in questo ordine:
 2. [Backup e rollback](docs/backup-and-rollback.md)
 3. [Installazione CB1 e Klipper Mainline](docs/install-cb1-mainline.md)
 4. [Flashing e recovery delle MCU](docs/flash-mcus.md)
-5. [Configurazione base Mainline](docs/base-configuration.md)
-6. [Eddy nativo](docs/native-eddy.md)
-7. [Phoenix Macros](docs/phoenix-macros.md)
-8. [Validazione e calibrazione](docs/validation-and-calibration.md)
-9. [Troubleshooting](docs/troubleshooting.md)
+5. [Sovol Zero toolhead, Eddy nativo e piatto in grafite](docs/zero-toolhead-eddy-2026-08-17.md)
+6. [Configurazione base Mainline](docs/base-configuration.md)
+7. [Eddy nativo](docs/native-eddy.md)
+8. [Phoenix Macros](docs/phoenix-macros.md)
+9. [Validazione e calibrazione](docs/validation-and-calibration.md)
+10. [Troubleshooting](docs/troubleshooting.md)
 
 È disponibile anche un indice di compatibilità per i vecchi link:
 
