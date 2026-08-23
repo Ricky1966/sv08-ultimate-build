@@ -249,35 +249,6 @@ Modifiche future o specifiche della macchina possono includere:
 
 Queste modifiche non devono ridefinire la procedura di migrazione base.
 
-## Regole del repository
-
-Non committare:
-
-- password;
-- credenziali Wi-Fi;
-- token;
-- chiavi private;
-- host key SSH;
-- dump MCU personali destinati solo al rollback;
-- immagini eMMC private complete;
-- segreti specifici della macchina.
-
-Prima di rendere pubblico un branch o una release, esegui un audit privacy di:
-
-- file correnti;
-- storia Git;
-- branch;
-- tag;
-- asset delle release.
-
-## Firmware e artefatti binari
-
-I dump originali personali del firmware devono restare nei backup locali, non nella storia pubblica del repository.
-
-Il firmware preparato per la migrazione deve essere riproducibile tramite parametri di build documentati quando possibile.
-
-Se in futuro verranno distribuite immagini binarie grandi o immagini di sistema sanitizzate, le GitHub Releases sono preferibili alla normale storia Git.
-
 ## Progetti upstream
 
 Questo progetto si basa sul lavoro delle community Klipper e SV08, inclusi:
