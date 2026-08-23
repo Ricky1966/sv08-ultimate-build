@@ -264,12 +264,6 @@ Questo progetto si basa sul lavoro delle community Klipper e SV08, inclusi:
 
 Consulta sempre il progetto upstream pertinente prima di applicare vecchi workaround provenienti dalla cronologia di migrazione.
 
-## Politica linguistica
-
-L'italiano è la lingua principale del repository. L'inglese viene mantenuto come secondo percorso community completo.
-
-La cronologia di sviluppo Phoenix e le note archivistiche specifiche della macchina possono restare in italiano quando non fanno parte della procedura community riutilizzabile.
-
 ## Licenza
 
 Il materiale originale di questo repository è distribuito secondo i termini della **GNU General Public License v3.0 or later**, nella misura in cui il relativo copyright sia detenuto dagli autori del progetto.
