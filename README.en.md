@@ -243,12 +243,8 @@ The community Mainline baseline is intentionally kept separate from later Phoeni
 
 Future or machine-specific changes may include:
 
-- graphite bed;
-- toolhead redesign;
 - CAN bus;
-- EBB36 / EBB42;
 - enclosure modifications;
-- SSR;
 - insulation;
 - umbilical redesign.
 
