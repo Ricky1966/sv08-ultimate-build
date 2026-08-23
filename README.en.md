@@ -264,6 +264,23 @@ This project builds on work from the Klipper and SV08 communities, including:
 
 Always consult the relevant upstream project before applying old workarounds from migration history.
 
+## Acknowledgements
+
+First of all, I would like to thank **Salvatore Crobu**, who, even though we were already well into the middle of the night, did not hesitate to help and gave me suggestions that proved very useful.
+
+I would also like to thank **[Noizie Works](https://www.youtube.com/watch?v=q1DfbeRsqBI&t=780s)**, whose video on installing the **[R3men](https://www.r3men.com/products/graphite-heated-bed-for-sovol-sv08)** graphite bed gave me an important initial reference for tackling this modification.
+
+I would also like to thank all the developers and the community behind **[Demon Klipper Essentials Unified (DKEU)](https://github.com/3DPrintDemon/Demon_Klipper_Essentials_Unified)** for the excellent work they have done. DKEU played an important role during one stage of Phoenix development, even though the project later followed its own development path through to the creation of the Phoenix Macros.
+
+Finally, thank you to everyone who decides to take on this journey and, especially, to those who help the project evolve by reporting bugs, problems, corrections, improvements, or by sharing their own experience.
+
+As already stated clearly in the introduction, **I accept no responsibility for damage or errors resulting from the use of the procedures described in this repository**. Read, verify, and understand what you are doing before proceeding; otherwise, you may end up with a rather bulky coat rack instead of a 3D printer.
+
+> [!WARNING]
+> If you install a graphite bed with a heater powered directly from mains electricity, remember that **110 V or 230 V can be lethal**.
+>
+> Working with mains voltage requires proper competence, adequate insulation, grounding, correct protection, and verification before commissioning. If you do not have experience working with mains-voltage electrical systems, **do not improvise** and seek help from a qualified person.
+
 ## License
 
 Original material in this repository is distributed under the **GNU General Public License v3.0 or later**, to the extent that copyright in that material is held by the project authors.
