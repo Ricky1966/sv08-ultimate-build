@@ -57,7 +57,10 @@ Se stai migrando una Sovol SV08, segui le guide in questo ordine:
 
 ## Leggi prima di flashare qualsiasi cosa
 
-**Non** iniziare cancellando o flashando le MCU.
+> [!WARNING]
+> **Non iniziare cancellando o flashando le MCU.**
+>
+> Per maggiore sicurezza, durante la migrazione Phoenix il lavoro iniziale è stato eseguito da **MicroSD anziché direttamente su eMMC**. La MicroSD non offre necessariamente la stessa affidabilità o longevità di una buona eMMC, ma ha un vantaggio pratico importante: se qualcosa va storto può essere sostituita rapidamente e a basso costo con un supporto facilmente reperibile, senza dipendere dai tempi e dai costi di approvvigionamento di una nuova eMMC compatibile. Questo rende la MicroSD particolarmente utile come supporto di test, recovery e migrazione iniziale.
 
 Prima di modificare il firmware, completa almeno:
 
