@@ -380,3 +380,20 @@ microsteps = 16
 ```
 
 Non usare `M84` e non usare `Z_OFFSET_APPLY_PROBE`.
+
+## Follow-up del 23 agosto 2026
+
+Il punto 1 dei “Prossimi passi” è stato completato.
+
+È stato chiuso il lavoro di fino sulle Phoenix Macros senza riaprire componenti hardware già validati:
+
+- completata la separazione runtime da DKEU;
+- completata la validazione fisica del blocco filamento;
+- `PHOENIX_PRESSURE_ADVANCE_TEST` rimossa intenzionalmente e calibrazione PA delegata allo slicer;
+- residuo OrcaSlicer `_DEMON_ADAPTIVE_PA` rimosso dai quattro profili Phoenix attivi;
+- nuovo G-code verificato con zero chiamate eseguibili `_DEMON_ADAPTIVE_PA`;
+- runtime Phoenix corrente: 21 macro `PHOENIX_*`.
+
+Restano invariati i vincoli operativi riportati sopra: nessuna modifica a Eddy, viti bed, Z globale o parametri protetti senza nuova evidenza concreta.
+
+I punti 2, 3 e 4 dei “Prossimi passi” restano validi come attività eventuali/future.
