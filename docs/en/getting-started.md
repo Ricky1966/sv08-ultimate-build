@@ -98,7 +98,7 @@ Klipper Mainline supports several Eddy probing methods, including:
 
 The Sovol Zero-specific configuration and the Eddy parameters validated on Phoenix are documented in the dedicated page:
 
-`docs/zero-toolhead-eddy-2026-08-17.md`
+[Sovol Zero toolhead, CAN and integrated Eddy](zero-toolhead-eddy-2026-08-17.md)
 
 These values describe **the Phoenix configuration that was actually tested** and must not be treated as universal presets.
 
@@ -140,7 +140,7 @@ Macros that are exposed and loaded by Klipper must not be confused with macros t
 
 See:
 
-`docs/phoenix-macros.md`
+[Phoenix Macros](phoenix-macros.md)
 
 ## Before you start
 
@@ -220,12 +220,9 @@ Each step should be interpreted as one of these categories:
 
 This distinction prevents a test-machine customization from being mistaken for a universal requirement.
 
-## Next step
+---
 
-Before installing software or flashing an MCU:
+## Navigation
 
-**create and verify the backup.**
-
-Continue with:
-
-`docs/en/backup-and-rollback.md`
+- ← **Previous page:** [README](../../README.en.md)
+- → **Next page:** [Backup and rollback](backup-and-rollback.md)

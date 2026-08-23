@@ -2,7 +2,7 @@
 
 **Languages:** [Italiano](../install-cb1-mainline.md) | **English**
 
-Last source review: **2026-08-10**.
+Last source review: **2026-08-23**.
 
 ## Purpose
 
@@ -10,7 +10,7 @@ This section documents the transition from the stock Sovol SV08 Linux system to 
 
 The main reference is:
 
-`Rappetor/Sovol-SV08-Mainline`
+[Rappetor/Sovol-SV08-Mainline](https://github.com/Rappetor/Sovol-SV08-Mainline)
 
 Phoenix was migrated using this path as the foundation, with additional checks documented in this repository.
 
@@ -18,7 +18,7 @@ Phoenix was migrated using this path as the foundation, with additional checks d
 
 Before continuing, complete:
 
-`docs/en/backup-and-rollback.md`
+[Backup and rollback](backup-and-rollback.md)
 
 Do not proceed if the stock system cannot be recovered.
 
@@ -38,18 +38,24 @@ Prefer the **minimal** image, avoiding images with preinstalled and uncontrolled
 
 ## Where to install the new system
 
-Several approaches are possible:
+The upstream guide allows several approaches:
 
 - a new dedicated eMMC;
 - the original eMMC after creating a complete backup;
-- microSD for testing or permanent use;
+- microSD;
 - USB/FEL installation according to the upstream procedure.
 
-For a first migration attempt, physically preserving a bootable stock medium provides the simplest rollback.
+For the Phoenix path documented in this repository, the **initial migration and validation are performed from MicroSD**, leaving the stock eMMC untouched.
+
+This makes it easier to interrupt testing, replace the storage medium, or return to the original system without immediately rewriting the eMMC.
+
+The MicroSD is not presented as inherently more reliable than eMMC for permanent use: it is chosen as the initial medium mainly for easier testing and rollback.
 
 ## Preparing the storage medium
 
-After writing the CB1 V2.3.4 minimal image, the `BOOT` partition must be accessible from your computer.
+After writing the CB1 V2.3.4 minimal image to the **MicroSD used for the initial Phoenix migration**, the `BOOT` partition must be accessible from your computer.
+
+The same configuration changes apply when following another compatible upstream installation method.
 
 Before editing any file:
 
@@ -147,7 +153,7 @@ If microSD and eMMC are both present, use `lsblk` to verify which device is actu
 
 This prevents configuring a different system from the one you think you booted.
 
-## Next stage
+## Software stack to install
 
 With Linux booted and SSH working, install:
 
@@ -180,7 +186,7 @@ KIAUH is used as the installation manager for the Klipper stack.
 
 Upstream repository:
 
-`dw-0/kiauh`
+[dw-0/kiauh](https://github.com/dw-0/kiauh)
 
 Install KIAUH following the current instructions from the official project.
 
@@ -285,27 +291,30 @@ Instead, recover in a controlled way:
 - fans;
 - macros that are actually required.
 
-Legacy macros and Eddy integrations must be evaluated separately.
+Legacy macros, old Eddy integrations, and any DKEU components from the previous configuration must be evaluated separately and must not be imported automatically into the Phoenix baseline.
 
 ## Initial configuration
 
 Before flashing the MCUs, prepare a minimal configuration that will later allow verification of:
 
 - mainboard connection;
-- toolboard connection;
+- connection to the original toolboard during the stock phase;
 - temperatures;
 - endstops;
 - steppers;
 - fans;
 - probe.
 
+The later installation of the **Sovol Zero Extruder Kit** introduces a CAN toolhead distinct from the original USB toolboard and is documented separately.
+
 Do not consider this configuration final yet.
 
 It will be refined in the sections dedicated to:
 
 - MCUs;
-- Eddy;
-- Demon;
+- Sovol Zero and CAN;
+- native Eddy integrated into the Zero;
+- Phoenix Macros;
 - calibration.
 
 ## Exit criteria
@@ -322,8 +331,9 @@ Before moving to MCU firmware, all of the following must be true:
 - stock configuration available as reference;
 - backup and rollback already verified.
 
-## Next step
+---
 
-The next stage is controlled MCU backup and flashing:
+## Navigation
 
-`docs/en/flash-mcus.md`
+- ← **Previous page:** [Backup and rollback](backup-and-rollback.md)
+- → **Next page:** [MCU flashing and recovery](flash-mcus.md)

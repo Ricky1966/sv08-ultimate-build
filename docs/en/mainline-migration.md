@@ -13,10 +13,12 @@ The Sovol SV08 to Klipper Mainline migration procedure is now split across the f
 3. [CB1 and Mainline installation](install-cb1-mainline.md)
 4. [MCU flashing and recovery](flash-mcus.md)
 5. [Base Mainline configuration](base-configuration.md)
-6. [Native Eddy](native-eddy.md)
-7. [Demon / DKEU3 integration](demon-integration.md)
+6. [Sovol Zero toolhead, CAN and integrated Eddy](zero-toolhead-eddy-2026-08-17.md)
+7. [Phoenix Macros](phoenix-macros.md)
 8. [Validation and calibration](validation-and-calibration.md)
 9. [Troubleshooting](troubleshooting.md)
+
+The pages dedicated to the old Eddy NG configuration and DKEU integration remain available as **historical** documentation of the Phoenix development path, but they are not part of the current operational baseline.
 
 ## Important
 
@@ -37,3 +39,10 @@ The detailed Phoenix machine history is preserved separately under:
 `docs/migration-history/phoenix/`
 
 That history records the real development and debugging path, but it must not be used as a linear community procedure. It is currently maintained in Italian.
+
+---
+
+## Navigation
+
+- ← **Previous page:** [README](../../README.en.md)
+- → **Next page:** [Getting started](getting-started.md)

@@ -2,16 +2,17 @@
 
 **Languages:** [Italiano](../validation-and-calibration.md) | **English**
 
-Last review: **2026-08-10**.
+Last review: **2026-08-23**.
 
 ## Purpose
 
-This guide defines the validation order after migrating a Sovol SV08 to:
+This guide defines the validation order for the Sovol SV08 Phoenix with:
 
 - Klipper Mainline;
 - Mainline MCU firmware;
-- native Eddy;
-- Demon/DKEU.
+- Sovol Zero Extruder Kit over CAN;
+- native Eddy integrated into the Zero;
+- Phoenix Macros.
 
 The goal is to avoid calibrating filament while the machine is not yet geometrically stable, or mechanically correcting problems that actually belong to macros, Z, or the slicer.
 
@@ -104,7 +105,7 @@ Before any calibration, verify:
 
 - no Klipper errors;
 - mainboard connected;
-- toolboard connected;
+- Zero toolhead reachable over CAN;
 - plausible temperatures;
 - working fans;
 - correct heaters;
@@ -131,9 +132,11 @@ For the bed this includes:
 - significant thermal-mass changes;
 - major insulation changes.
 
-## Hotend PID — Phoenix
+## Historical Phoenix — hotend PID with MicroSwiss FlowTech
 
-Phoenix uses a MicroSwiss FlowTech.
+During an earlier Phoenix phase, a MicroSwiss FlowTech was installed.
+
+That is no longer the current hardware baseline with the Sovol Zero.
 
 During the Mainline migration, hotend PID values at `220 °C` were saved as:
 
@@ -147,7 +150,7 @@ Do not copy them to another machine.
 
 Always run your own PID calibration.
 
-## Bed PID — Phoenix
+## Historical Phoenix — bed PID from the previous configuration
 
 During the same Phoenix stage, saved values were:
 
@@ -210,9 +213,9 @@ QGL should:
 
 QGL must not be used to correct an incorrect Z configuration.
 
-## Phoenix verified — QGL
+## Historical Phoenix — QGL before the Sovol Zero
 
-On Phoenix, with native Eddy and the consolidated configuration, a hot test produced:
+Before the final Sovol Zero installation, a hot Phoenix test with the previous native Eddy configuration produced:
 
 - retries: `3/5`
 - probed range: `0.018441`
@@ -246,11 +249,11 @@ Only after stable homing, QGL, and probing should you create a mesh.
 
 For Mainline Eddy, `rapid_scan` can be used once the configuration has already been validated.
 
-During initial debugging it is also useful to verify native behavior without Demon wrappers.
+During historical debugging of the DKEU configuration, it was also useful to verify the native path without the Demon wrapper used at that time.
 
-## Phoenix verified — mesh
+## Historical Phoenix — mesh before the Sovol Zero
 
-The hot 15 x 15 Phoenix mesh using:
+In the previous Phoenix configuration, the hot 15 x 15 mesh using:
 
 `BED_MESH_CALIBRATE METHOD=rapid_scan`
 
@@ -370,7 +373,7 @@ Temperature affects:
 
 Do not calibrate flow or pressure advance while temperature is still uncertain.
 
-## Phoenix verified — PolyTerra PLA
+## Historical Phoenix — PolyTerra PLA with FlowTech
 
 For the profile:
 
@@ -380,7 +383,7 @@ the consolidated calibration temperature was:
 
 `200 °C`
 
-This was validated for:
+This was validated for that historical combination:
 
 - Phoenix;
 - MicroSwiss FlowTech;
@@ -401,9 +404,9 @@ Do not use it to compensate for:
 - bad mesh;
 - uncalibrated first layer.
 
-## Phoenix verified — Flow ratio
+## Historical Phoenix — Flow ratio with FlowTech
 
-PolyTerra calibration produced:
+PolyTerra calibration of the previous FlowTech configuration produced:
 
 `Flow ratio = 1.0465`
 
@@ -429,9 +432,9 @@ Incorrect values can cause:
 - thickness variation during acceleration;
 - artifacts during speed transitions.
 
-## Phoenix verified — Pressure Advance
+## Historical Phoenix — Pressure Advance with FlowTech
 
-The best area observed in PolyTerra calibration was about:
+In the previous FlowTech configuration, the best area observed in PolyTerra calibration was about:
 
 `0.034`
 
@@ -451,11 +454,12 @@ This demonstrates why you must always verify which source is actually setting PA
 PA can come from:
 
 - `printer.cfg`;
-- Demon;
 - OrcaSlicer;
 - start G-code;
 - macros;
 - filament profile.
+
+In the current Phoenix baseline, Pressure Advance is left to the **slicer**, avoiding a second competing source in Phoenix Macros.
 
 Before calibrating, verify who is actually setting it.
 
@@ -512,15 +516,15 @@ It is not enough to read:
 
 When necessary, inspect E moves and retraction commands directly in generated G-code.
 
-## Phoenix verified — Retraction
+## Historical Phoenix — Retraction with FlowTech
 
-During final PolyTerra calibration:
+During PolyTerra calibration of the previous FlowTech configuration:
 
 - the towers were essentially clean;
 - there was no significant stringing;
 - no further increase in retraction was required.
 
-The current retraction was therefore kept as validated.
+The retraction used in that configuration was therefore kept as a validated value for that phase.
 
 The exact value is not promoted as a community preset because it depends on the path actually used by the slicer profile.
 
@@ -542,7 +546,7 @@ If set too high it can cause:
 - weak walls;
 - inconsistency at high speed.
 
-## Phoenix verified — Max Volumetric Speed
+## Historical Phoenix — Max Volumetric Speed with FlowTech
 
 The PolyTerra profile initially used:
 
@@ -552,11 +556,11 @@ After calibration, the consolidated value became:
 
 `24 mm³/s`
 
-This is the validated operational limit for that Phoenix combination.
+This value had been selected as the validated operational limit for that specific Phoenix combination.
 
 It does not represent the universal capability of the FlowTech or PolyTerra PLA.
 
-## Consolidated Phoenix profile
+## Historical Phoenix — consolidated FlowTech profile
 
 Final validated values:
 
@@ -566,13 +570,15 @@ Final validated values:
 - retraction: current value, validated by test
 - max volumetric speed: `24 mm³/s`
 
-These values belong to the combination:
+These values belong to the previous combination:
 
 - Phoenix;
 - MicroSwiss FlowTech;
 - 0.4 nozzle;
 - PolyTerra PLA;
 - specific OrcaSlicer profile.
+
+They do not automatically represent the current Sovol Zero baseline.
 
 ## Bed replacement and filament calibration
 
@@ -634,7 +640,9 @@ This allows a direct comparison of:
 - before;
 - after.
 
-On Phoenix, this method clearly separated the effect of the `_APPLY_EDDY_Z_OFFSET` correction from slicer or material changes.
+During the previous Phoenix phase based on DKEU, this method clearly separated the effect of the historical `_APPLY_EDDY_Z_OFFSET` correction from slicer or material changes.
+
+That macro belongs to the previous DKEU integration and is not part of the current Phoenix Macros runtime.
 
 ## Freeze validated calibration
 
@@ -708,8 +716,9 @@ The machine can be considered calibrated when:
 - MVS is defined;
 - a real print completes without obvious systematic defects.
 
-## Next step
+---
 
-With migration and calibration complete:
+## Navigation
 
-`docs/en/troubleshooting.md`
+- ← **Previous page:** [Phoenix Macros](phoenix-macros.md)
+- → **Next page:** [Troubleshooting](troubleshooting.md)

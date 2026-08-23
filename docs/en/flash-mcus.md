@@ -2,7 +2,14 @@
 
 **Languages:** [Italiano](../flash-mcus.md) | **English**
 
-Last source review: **2026-08-10**.
+Last source review: **2026-08-23**.
+
+> [!IMPORTANT]
+> This page documents flashing the **original MCUs present during the initial migration of the stock SV08**.
+>
+> The current Phoenix configuration later uses a **Sovol Zero Extruder Kit connected over CAN**. The Zero must not be confused with the original USB toolboard described on this page.
+>
+> **Convention used on this page:** unless explicitly stated otherwise, every reference to “toolboard” means the **original Sovol USB toolboard of the stock machine**, not the CAN MCU on the Sovol Zero.
 
 ## Purpose
 
@@ -11,25 +18,25 @@ This stage moves the two original Sovol SV08 MCUs from stock firmware to:
 1. Katapult as bootloader;
 2. Klipper Mainline as the application.
 
-The SV08 has two distinct MCUs that must be handled separately:
+In the stock configuration described here, the SV08 has two distinct MCUs that must be handled separately:
 
 - mainboard MCU;
-- toolboard MCU.
+- original toolboard MCU.
 
 Do not proceed until you have completed:
 
-- `docs/en/backup-and-rollback.md`
-- `docs/en/install-cb1-mainline.md`
+- [Backup and rollback](backup-and-rollback.md)
+- [CB1 and Klipper Mainline installation](install-cb1-mainline.md)
 
 ## Upstream sources
 
 The path follows mainly:
 
-`Rappetor/Sovol-SV08-Mainline`
+[Rappetor/Sovol-SV08-Mainline](https://github.com/Rappetor/Sovol-SV08-Mainline)
 
 and the official project:
 
-`Arksine/katapult`
+[Arksine/katapult](https://github.com/Arksine/katapult)
 
 Current upstream instructions take priority over old screenshots, videos, or local copies.
 
@@ -48,7 +55,7 @@ Swapping mainboard and toolboard can produce an unbootable machine or a configur
 
 ## MCU hardware verified on Phoenix
 
-The machine used to validate this migration uses, on both mainboard and toolboard:
+During the initial migration, Phoenix used, on both the mainboard and the original toolboard:
 
 - `STM32F103` MCU;
 - 8 MHz crystal;
@@ -60,7 +67,7 @@ Before copying them to another machine, verify that its hardware revision is com
 
 ## Katapult
 
-Katapult is installed on both MCUs.
+In this stock phase, Katapult is installed on both original MCUs.
 
 Katapult configuration validated on Phoenix:
 
@@ -81,13 +88,13 @@ After the initial programmer-based installation, Katapult allows Klipper updates
 
 Katapult supports flashing over several transports, including USB, UART, and CAN.
 
-The Phoenix configuration described here uses USB for both mainboard and toolboard.
+During the original migration documented on this page, Phoenix used USB for the mainboard and original toolboard.
 
 ## Installing Katapult from source
 
 Upstream repository:
 
-`Arksine/katapult`
+[Arksine/katapult](https://github.com/Arksine/katapult)
 
 The normal upstream process is:
 
@@ -131,7 +138,7 @@ The firmware built during the Phoenix migration had SHA256:
 
 `9182930d07326c7f9ca031ac03e735a044fe59eb4b5cb55a00167aeff0ccb8e8`
 
-## Klipper configuration — toolboard
+## Klipper configuration — original toolboard (historical phase)
 
 Configuration verified on Phoenix:
 
@@ -145,11 +152,13 @@ The firmware built during the Phoenix migration had SHA256:
 
 `8db953d31271dd7999eb80f193637ff08f31f4e73f048290040d00dc6c71ee70`
 
-The original Phoenix build also contained the Eddy NG support that was in use at that time.
+The original Phoenix build also contained the Eddy NG support used at that time.
 
-That detail belongs to the migration history.
+This detail belongs to migration history and **does not describe the current Phoenix toolhead**.
 
-Current Eddy configuration is covered separately in the guide to native Mainline Eddy support.
+The current configuration uses the Sovol Zero over CAN with integrated Eddy and is documented in:
+
+[Sovol Zero toolhead, CAN and integrated Eddy](zero-toolhead-eddy-2026-08-17.md)
 
 ## Back up original firmware BEFORE Katapult
 
@@ -158,7 +167,7 @@ Before erasing or programming an MCU, read and save the original firmware from y
 Create two distinct files:
 
 - original mainboard firmware;
-- original toolboard firmware.
+- original stock toolboard firmware.
 
 Do not use original firmware files from third-party repositories as your only backup.
 
@@ -206,7 +215,9 @@ After Klipper Mainline installation, prefer stable identifiers under:
 Then update `printer.cfg`, carefully verifying that:
 
 - `[mcu]` points to the mainboard;
-- `[mcu extra_mcu]`, or the equivalent name used by the configuration, points to the toolboard.
+- `[mcu extra_mcu]`, or the equivalent name used during that phase, points to the original toolboard.
+
+After the Sovol Zero is installed, this association no longer represents the current toolhead: the Zero uses its own CAN MCU.
 
 Do not infer the association from `ttyACM0`, `ttyACM1`, or similar ordering.
 
@@ -383,7 +394,7 @@ Do not use homing as the first test of an unverified endstop.
 
 ## Fan and output verification
 
-Outputs controlled by the mainboard and toolboard must be checked separately.
+In this phase, outputs controlled by the mainboard and original toolboard must be checked separately.
 
 Pay particular attention to:
 
@@ -470,23 +481,24 @@ The Phoenix migration successfully moved:
 - configuration to the new identifiers without swapping mainboard and toolboard;
 - the printer to a successful Klipper Mainline boot.
 
-This stage was completed before final Eddy integration and mechanical calibration.
+This stage was completed before the final installation of the Sovol Zero, its integrated Eddy probe, and subsequent calibrations.
 
 ## Exit criteria
 
 Before moving to general configuration, all of the following must be true:
 
-- both MCUs run Klipper Mainline;
+- both original MCUs run Klipper Mainline;
 - stable serial identifiers recorded;
 - `[mcu]` associated with the correct mainboard;
-- toolboard associated with the correct section;
+- original toolboard associated with the correct section;
 - plausible temperatures;
 - no MCU errors;
 - original backups preserved;
 - ST-Link recovery still available.
 
-## Next step
+---
 
-With the MCUs operational:
+## Navigation
 
-`docs/en/base-configuration.md`
+- ← **Previous page:** [CB1 and Klipper Mainline installation](install-cb1-mainline.md)
+- → **Next page:** [Base Mainline configuration](base-configuration.md)

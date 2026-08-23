@@ -8,12 +8,16 @@ Last source review: **2026-08-10**.
 
 Before modifying the operating system, eMMC, or MCU firmware, create a verifiable return path.
 
-For an SV08 migration to Klipper Mainline, consider at least four separate backup levels:
+For a **stock SV08** migration to Klipper Mainline, consider at least four separate backup levels:
 
 1. Klipper and service configuration;
 2. Linux system / eMMC;
 3. original mainboard MCU firmware;
-4. original toolboard MCU firmware.
+4. original stock toolboard MCU firmware.
+
+These four levels describe the stock machine before migration.
+
+If your SV08 already has a different toolhead installed, such as the **Sovol Zero Extruder Kit**, also save the current toolhead firmware, configuration, and identifiers separately.
 
 These backups are not equivalent.
 
@@ -28,7 +32,7 @@ Save at least:
 - custom macros;
 - `saved_variables.cfg`;
 - Eddy configuration;
-- Demon configuration;
+- Phoenix Macros and any other custom macros/configuration;
 - `moonraker.conf`;
 - `mainsail.cfg`;
 - `KlipperScreen.conf`, if used;
@@ -93,9 +97,11 @@ Identify the backup with at least:
 
 ## Level 4 — Original toolboard MCU firmware
 
-Apply the same principle to the toolboard.
+This section refers to the **original Sovol toolboard present during the initial migration of the stock machine**.
 
-Mainboard and toolboard must be treated as two different MCUs.
+Apply the same principle to the original toolboard before replacing it or modifying its firmware.
+
+Mainboard and original toolboard must be treated as two different MCUs.
 
 Do not assume that one dump covers both.
 
@@ -210,7 +216,11 @@ During the real migration used to validate this guide, the following were saved 
 
 The original machine-specific Phoenix files are kept locally and are not part of the public repository baseline.
 
-Their presence in the technical history only documents that a real rollback path existed.
+The current Phoenix configuration uses a **Sovol Zero Extruder Kit connected over CAN**.
+
+The Zero backup is therefore an additional element beyond the four stock-machine levels: firmware, configuration, and CAN identifiers must be saved separately when working on the current toolhead.
+
+The historical Phoenix backups are retained only to document that a real rollback path existed during migration.
 
 ## Exit criteria
 
@@ -219,13 +229,14 @@ Do not proceed to Mainline installation until all of these are true:
 - configuration saved;
 - stock system recoverable;
 - mainboard MCU recoverable;
-- toolboard MCU recoverable;
+- original toolboard MCU recoverable;
 - checksums available;
 - backups stored off the printer;
 - ST-Link available and usable.
 
-## Next step
+---
 
-After completing and verifying the backup:
+## Navigation
 
-`docs/en/install-cb1-mainline.md`
+- ← **Previous page:** [Getting started](getting-started.md)
+- → **Next page:** [CB1 and Klipper Mainline installation](install-cb1-mainline.md)
