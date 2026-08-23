@@ -255,7 +255,7 @@ Before the final Sovol Zero installation, the Phoenix configuration used:
 
 `max_adjust` had been reduced from `30` to `4` as a safety measure.
 
-With the previous native Eddy configuration and a heated machine, this setup had completed QGL with:
+With the previous Eddy NG configuration already handled by native Mainline support and a heated machine, this setup had completed QGL with:
 
 - retries: `3/5`
 - probed points range: about `0.018 mm`
