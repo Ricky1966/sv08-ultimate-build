@@ -264,6 +264,23 @@ Questo progetto si basa sul lavoro delle community Klipper e SV08, inclusi:
 
 Consulta sempre il progetto upstream pertinente prima di applicare vecchi workaround provenienti dalla cronologia di migrazione.
 
+## Ringraziamenti
+
+Per primo desidero ringraziare **Salvatore Crobu**, che, malgrado fossimo ormai nel cuore della notte, non si è tirato indietro e mi ha dato suggerimenti che si sono rivelati molto utili.
+
+Un ringraziamento anche al canale **[Noizie Works](https://www.youtube.com/watch?v=q1DfbeRsqBI&t=780s)**, il cui video sull'installazione del piatto in grafite **[R3men](https://www.r3men.com/products/graphite-heated-bed-for-sovol-sv08)** mi ha fornito un primo importante riferimento per affrontare questa modifica.
+
+Desidero inoltre ringraziare tutti gli sviluppatori e la community di **[Demon Klipper Essentials Unified (DKEU)](https://github.com/3DPrintDemon/Demon_Klipper_Essentials_Unified)** per l'eccellente lavoro svolto. DKEU ha avuto un ruolo importante durante una fase dello sviluppo di Phoenix, anche se successivamente il progetto ha seguito una propria linea evolutiva fino alla realizzazione delle Phoenix Macros.
+
+Infine, grazie a tutti coloro che vorranno cimentarsi in questo viaggio e, in particolare, a chi contribuirà all'evoluzione del progetto segnalando bug, problemi, correzioni, miglioramenti o condividendo la propria esperienza.
+
+Come già ampiamente indicato nell'introduzione, **non mi assumo alcuna responsabilità per danni o errori derivanti dall'utilizzo delle procedure descritte in questo repository**. Leggete, verificate e capite quello che state facendo prima di procedere: altrimenti il rischio è di ritrovarsi con un ingombrante porta abiti al posto di una stampante 3D.
+
+> [!WARNING]
+> Se installate un piatto in grafite con riscaldatore alimentato direttamente dalla rete, ricordate che **110 V o 230 V possono essere letali**.
+>
+> Lavorare sulla tensione di rete richiede competenza, isolamento adeguato, messa a terra, protezioni corrette e verifiche prima della messa in servizio. Se non avete esperienza con impianti elettrici a tensione di rete, **non improvvisate** e rivolgetevi a una persona qualificata.
+
 ## Licenza
 
 Il materiale originale di questo repository è distribuito secondo i termini della **GNU General Public License v3.0 or later**, nella misura in cui il relativo copyright sia detenuto dagli autori del progetto.
