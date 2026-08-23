@@ -13,7 +13,7 @@
 >
 > Firmware flashing, configuration changes, wiring, calibration, and machine movements can result in loss of the original configuration, malfunction, or hardware damage if performed incorrectly.
 >
-> **You use this repository at your own risk.** Before making any changes, keep verified backups and make sure you understand the operations you are performing.
+> **!!! You use this repository at your own risk. !!!** Before making any changes, keep verified backups and make sure you understand the operations you are performing.
 >
 **Languages:** [Italiano](README.md) | **English**
 
