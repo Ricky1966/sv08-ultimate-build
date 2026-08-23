@@ -243,12 +243,8 @@ La baseline community Mainline è intenzionalmente separata dal successivo svilu
 
 Modifiche future o specifiche della macchina possono includere:
 
-- piatto in grafite;
-- redesign toolhead;
 - bus CAN;
-- EBB36 / EBB42;
 - modifiche enclosure;
-- SSR;
 - isolamento;
 - redesign umbilical.
 
