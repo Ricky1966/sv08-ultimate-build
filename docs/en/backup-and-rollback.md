@@ -45,16 +45,6 @@ Save at least:
 - Z offset and useful calibration data;
 - mesh and QGL results useful as historical reference.
 
-Do not copy into the public repository:
-
-- passwords;
-- tokens;
-- SSH keys;
-- Wi-Fi credentials;
-- personal databases;
-- files containing secrets;
-- unreviewed logs.
-
 ## Level 2 — Linux system / eMMC
 
 The safest method is to keep a bootable stock storage medium available.

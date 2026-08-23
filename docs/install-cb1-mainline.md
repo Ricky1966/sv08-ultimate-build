@@ -106,13 +106,6 @@ Se la stampante utilizzerà Wi-Fi, configurare le credenziali in:
 
 È possibile impostare anche un hostname personalizzato.
 
-Non pubblicare mai nel repository:
-
-- SSID personali;
-- password Wi-Fi;
-- hostname contenenti dati personali;
-- indirizzi IP privati usati come identificativi permanenti.
-
 Se la password Wi-Fi contiene caratteri speciali, verificare le regole di escaping previste dallo script CB1.
 
 La guida upstream segnala in particolare il carattere `$`, che può richiedere escaping.

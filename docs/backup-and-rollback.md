@@ -43,16 +43,6 @@ Salvare almeno:
 - Z offset e calibrazioni utili come riferimento;
 - mesh e risultati QGL utili come confronto storico.
 
-Non copiare nel repository pubblico:
-
-- password;
-- token;
-- chiavi SSH;
-- credenziali Wi-Fi;
-- database personali;
-- file con segreti;
-- log non verificati.
-
 ## Livello 2 — Sistema Linux / eMMC
 
 Il metodo più sicuro è mantenere disponibile un supporto stock ancora avviabile.

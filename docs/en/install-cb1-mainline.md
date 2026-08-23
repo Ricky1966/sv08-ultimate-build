@@ -108,13 +108,6 @@ If the printer will use Wi-Fi, configure credentials in:
 
 A custom hostname can also be set.
 
-Never publish in the repository:
-
-- personal SSIDs;
-- Wi-Fi passwords;
-- hostnames containing personal data;
-- private IP addresses used as persistent identifiers.
-
 If the Wi-Fi password contains special characters, verify the escaping rules used by the CB1 script.
 
 The upstream guide specifically notes that `$` may require escaping.
