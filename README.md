@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/assets/phoenix-readme-logo.png" alt="Phoenix — Sovol SV08 Mainline Klipper" width="720">
+</p>
+
 # SV08 Ultimate Build
 
 
