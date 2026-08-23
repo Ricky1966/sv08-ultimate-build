@@ -9,7 +9,7 @@ Questo repository documenta una migrazione reale e verificata di una **Sovol SV0
 - Moonraker;
 - Mainsail;
 - KlipperScreen, se utilizzato;
-- Demon Klipper Essentials Unified (DKEU);
+- Phoenix Macros;
 - hardware Sovol Eddy NG tramite supporto Eddy nativo di Klipper;
 - OrcaSlicer.
 
