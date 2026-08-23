@@ -17,7 +17,7 @@
 >
 > Flash del firmware, modifiche alla configurazione, cablaggi, calibrazioni e movimenti della macchina possono causare perdita della configurazione originale, malfunzionamenti o danni se eseguiti in modo errato.
 >
-> **Chi utilizza questo repository lo fa sotto la propria responsabilità.** Prima di qualsiasi modifica, conserva backup verificati e assicurati di comprendere le operazioni che stai eseguendo.
+> **!!! Chi utilizza questo repository lo fa sotto la propria responsabilità. !!!** Prima di qualsiasi modifica, conserva backup verificati e assicurati di comprendere le operazioni che stai eseguendo.
 >
 **Lingue:** **Italiano** | [English](README.en.md)
 
