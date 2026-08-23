@@ -13,7 +13,7 @@
 >
 > Le procedure, configurazioni e modifiche documentate in questo repository derivano da una migrazione realmente eseguita e testata su una specifica Sovol SV08, ma **non costituiscono una garanzia di compatibilità o corretto funzionamento su ogni macchina**.
 >
-> Klipper, Katapult, Eddy, DKEU e gli altri componenti software evolvono nel tempo: quanto documentato qui rappresenta uno stato verificato del progetto, non necessariamente lo stato dell'arte corrente.
+> Klipper, Katapult, Eddy, Phoenix Macros e gli altri componenti software evolvono nel tempo: quanto documentato qui rappresenta uno stato verificato del progetto, non necessariamente lo stato dell'arte corrente.
 >
 > Flash del firmware, modifiche alla configurazione, cablaggi, calibrazioni e movimenti della macchina possono causare perdita della configurazione originale, malfunzionamenti o danni se eseguiti in modo errato.
 >
@@ -27,7 +27,7 @@ Documentazione community per migrare una **Sovol SV08** dallo stack software di 
 - backup, flashing e recovery delle MCU;
 - configurazione della stampante su Mainline;
 - supporto Eddy nativo di Klipper;
-- Demon Klipper Essentials Unified / DKEU3;
+- Phoenix Macros, sviluppate e validate durante la migrazione Phoenix;
 - calibrazione;
 - troubleshooting;
 - rollback.
@@ -44,7 +44,7 @@ Se stai migrando una Sovol SV08, segui le guide in questo ordine:
 4. [Flashing e recovery delle MCU](docs/flash-mcus.md)
 5. [Configurazione base Mainline](docs/base-configuration.md)
 6. [Eddy nativo](docs/native-eddy.md)
-7. [Integrazione Demon / DKEU3](docs/demon-integration.md)
+7. [Phoenix Macros](docs/phoenix-macros.md)
 8. [Validazione e calibrazione](docs/validation-and-calibration.md)
 9. [Troubleshooting](docs/troubleshooting.md)
 
@@ -82,7 +82,7 @@ Il percorso community documenta attualmente:
 - supporto nativo `[probe_eddy_current ...]`;
 - homing Z con Eddy nativo;
 - QGL e bed mesh;
-- integrazione DKEU3;
+- integrazione Phoenix Macros;
 - integrazione Machine G-code di OrcaSlicer;
 - validazione del first layer;
 - calibrazione filamento;
@@ -103,7 +103,7 @@ La migrazione Phoenix ha raggiunto un sistema Mainline pienamente operativo con:
 - probing nativo;
 - QGL;
 - bed mesh;
-- DKEU;
+- Phoenix Macros;
 - OrcaSlicer;
 - stampa reale completata con successo dopo la migrazione.
 
@@ -127,15 +127,32 @@ Vedi [Eddy nativo](docs/native-eddy.md).
 
 Valori specifici Phoenix come offset, `reg_drive_current`, `max_sensor_hz` e curve di calibrazione sono esempi, non preset universali.
 
-## Demon / DKEU3
+## Phoenix Macros
 
-Demon Klipper Essentials Unified viene integrato solo dopo che la macchina Mainline di base è già funzionante.
+La configurazione Phoenix corrente utilizza un proprio insieme di macro sopra Klipper Mainline.
 
-Non usare Demon come sostituto della validazione di comunicazione MCU, direzioni stepper, heater, endstop, homing, Eddy o QGL.
+Il 22 agosto 2026 è stato completato l'audit di separazione da DKEU. Il runtime corrente presenta:
 
-La guida documenta anche una lezione importante emersa dalla migrazione reale: un vecchio override locale di una macro può sostituire silenziosamente una macro DKEU più recente e creare un problema di stampa anche quando probing, QGL e mesh sembrano corretti.
+- **21 macro `PHOENIX_*` definite ed esposte correttamente da Klipper**;
+- Core Pack;
+- Calibration Pack;
+- Debug Pack;
+- Setup Pack;
+- nessun include DKEU attivo;
+- nessuna dipendenza runtime DKEU nei file Phoenix;
+- nessun `M84`, `force_move` o `save_variables` nel layer Phoenix;
+- bed mesh nativa Klipper con rapid scan e adaptive meshing nel workflow di stampa;
+- componenti esterni mantenuti separati e attribuiti ai rispettivi progetti.
 
-Vedi [Integrazione Demon / DKEU3](docs/demon-integration.md).
+Tra le macro correnti rientrano `PHOENIX_START`, `PHOENIX_END`, `PHOENIX_CLEAN_NOZZLE`, gestione filamento, calibrazione PID/Input Shaper, diagnostica probe/mesh/sensori e helper di setup.
+
+Il 23 agosto 2026 il blocco filamento è stato validato fisicamente sulla macchina: `PHOENIX_LOAD_FILAMENT`, `PHOENIX_UNLOAD_FILAMENT`, `PHOENIX_FILAMENT_RUNOUT` e `PHOENIX_FILAMENT_CHANGE` hanno completato correttamente i rispettivi workflow.
+
+`PHOENIX_PRESSURE_ADVANCE_TEST` è stata rimossa intenzionalmente: la calibrazione Pressure Advance viene delegata allo slicer, evitando di mantenere una seconda procedura tower ridondante.
+
+DKEU è stato utilizzato durante una fase importante della migrazione Phoenix e resta una origine storica/upstream da attribuire dove appropriato, ma **non è più una dipendenza operativa della baseline corrente**.
+
+Vedi [Phoenix Macros](docs/phoenix-macros.md).
 
 ## Filosofia di troubleshooting
 
