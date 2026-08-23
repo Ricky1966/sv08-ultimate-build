@@ -453,22 +453,6 @@ Per tornare al firmware stock:
 
 Il firmware MCU stock da solo non ricrea necessariamente l'intero ambiente Sovol originale.
 
-## Cosa NON pubblicare
-
-Prima di rendere pubblico un repository o un archivio diagnostico controllare che non contenga:
-
-- dump personali delle MCU;
-- immagini complete eMMC non sanitizzate;
-- chiavi SSH;
-- password;
-- reti Wi-Fi;
-- token;
-- database;
-- log con dati identificativi;
-- hostname o indirizzi usati come dati personali.
-
-I dump Phoenix rimangono backup locali.
-
 ## Phoenix verified — risultato della migrazione
 
 La migrazione Phoenix ha portato con successo:

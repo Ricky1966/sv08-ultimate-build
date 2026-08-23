@@ -455,22 +455,6 @@ To return to stock firmware:
 
 Stock MCU firmware alone does not necessarily recreate the complete original Sovol environment.
 
-## What NOT to publish
-
-Before making a repository or diagnostic archive public, check that it does not contain:
-
-- personal MCU dumps;
-- unsanitized complete eMMC images;
-- SSH keys;
-- passwords;
-- Wi-Fi networks;
-- tokens;
-- databases;
-- logs containing identifying data;
-- hostnames or addresses used as personal identifiers.
-
-Phoenix dumps remain local backups.
-
 ## Phoenix verified — migration result
 
 The Phoenix migration successfully moved:
