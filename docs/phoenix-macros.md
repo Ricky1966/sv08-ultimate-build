@@ -14,16 +14,19 @@ La baseline corrente è:
 
 **DKEU non è più una dipendenza runtime della configurazione Phoenix.**
 
-Il 22 agosto 2026 è stato completato l'audit strutturale del runtime attivo sulla macchina; la validazione funzionale è stata completata il 23 agosto 2026:
+Il 22 agosto 2026 è stato completato l'audit strutturale del runtime attivo sulla macchina; la validazione funzionale principale è stata completata il 23 agosto 2026. Il 25 agosto è iniziata l'integrazione del nuovo sistema Phoenix Automatic Soak, attualmente in validazione funzionale sulla macchina.
+
+La baseline Phoenix verificata comprende:
 
 - nessun include DKEU attivo in `printer.cfg`;
 - nessun riferimento operativo DKEU nei file `phoenix-*.cfg`;
-- nessun uso di `save_variables` da parte di Phoenix Macros;
 - nessun uso di `force_move`;
 - nessun uso di `M84`;
-- 21 macro `PHOENIX_*` definite;
-- tutte e 21 le macro esposte correttamente da Klipper;
+- 21 macro `PHOENIX_*` validate nella baseline del 23 agosto;
+- 5 nuove macro utente Phoenix Automatic Soak aggiunte il 25 agosto e in validazione;
 - Klipper riavviato senza errori di configurazione, Jinja o runtime durante la validazione strutturale dei pack.
+
+Phoenix usa ora `save_variables` esclusivamente per preferenze utente persistenti del proprio sistema Automatic Soak, tramite un file Phoenix dedicato. Il vecchio `~/demon_vars.cfg` non viene riutilizzato.
 
 Questa verifica certifica l'**autonomia strutturale/runtime** di Phoenix Macros rispetto a DKEU. La validazione fisica delle singole macro viene eseguita separatamente sulla macchina e non va confusa con il solo caricamento corretto da parte di Klipper.
 
@@ -92,6 +95,89 @@ M600 -> PHOENIX_FILAMENT_CHANGE
 FILAMENT_CHANGE -> PHOENIX_FILAMENT_CHANGE
 ```
 
+### Automatic Soak
+
+Aggiunto il 25 agosto 2026 e attualmente in validazione funzionale.
+
+Macro utente:
+
+- `PHOENIX_SOAK_AUTOSTART ENABLE=0|1`
+- `PHOENIX_SOAK_TEMPERATURE BED_TEMP=<temperatura>`
+- `PHOENIX_SOAK_START [BED_TEMP=<temperatura>]`
+- `PHOENIX_SOAK_STOP`
+- `PHOENIX_SOAK_STATUS`
+
+Il sistema usa due preferenze persistenti:
+
+```text
+phoenix_soak_autostart
+phoenix_soak_temperature
+```
+
+salvate tramite:
+
+```ini
+[save_variables]
+filename: ~/printer_data/config/phoenix_variables.cfg
+```
+
+Il file storico `~/demon_vars.cfg` non viene usato dal sistema Phoenix.
+
+#### Avvio automatico
+
+Se `phoenix_soak_autostart` è abilitato, pochi secondi dopo l'avvio di Klipper Phoenix:
+
+1. legge la temperatura configurata;
+2. imposta il target del bed;
+3. comunica esplicitamente in console che l'Automatic Soak è stato avviato;
+4. attende che il bed raggiunga la finestra utile di temperatura;
+5. inizia ad accumulare credito termico;
+6. registra il soak come valido quando il credito richiesto è completo.
+
+Il timer **non** inizia durante la rampa di riscaldamento. Con target 70 °C il credito comincia quando il bed raggiunge circa 69 °C.
+
+La baseline corrente del soak è 600 secondi, cioè 10 minuti effettivi nella finestra termica prevista.
+
+#### Stato termico e credito
+
+Il sistema riusa lo stato Phoenix esistente:
+
+```text
+_PHOENIX_THERMAL_STATE
+```
+
+con, tra le altre, le variabili runtime:
+
+```text
+soak_valid
+soak_temp
+soak_total_seconds
+thermal_credit_seconds
+```
+
+La preferenza dell'utente è persistente; la validità termica del soak **non** viene salvata come stato permanente tra spegnimenti.
+
+`PHOENIX_SOAK_STATUS` mostra:
+
+- Automatic Soak abilitato o disabilitato;
+- stato `INACTIVE`, `TRACKING` o `VALID`;
+- temperatura configurata;
+- temperatura reale e target del bed;
+- credito termico accumulato.
+
+`PHOENIX_SOAK_STOP` interrompe il soak corrente e spegne il bed senza cambiare la preferenza persistente di autostart.
+
+`PHOENIX_SOAK_START` permette l'avvio manuale usando la temperatura persistente oppure un override temporaneo tramite `BED_TEMP`.
+
+#### Integrazione con `PHOENIX_START`
+
+La logica in integrazione permette a `PHOENIX_START` di utilizzare:
+
+- un soak già completamente valido;
+- oppure il credito parziale accumulato da un Automatic Soak ancora in corso.
+
+In questo modo una stampa avviata dopo alcuni minuti di preriscaldamento non deve necessariamente ripetere da zero tutto il soak previsto.
+
 ### Calibration Pack
 
 - `PHOENIX_PID_TUNE`
@@ -129,20 +215,21 @@ Gestisce il workflow di avvio stampa validato sulla Phoenix.
 Sequenza corrente:
 
 1. imposta la temperatura target del bed;
-2. porta l'ugello alla temperatura di preparazione;
-3. esegue homing;
-4. esegue `PHOENIX_CLEAN_NOZZLE`;
-5. spegne il riscaldamento dell'ugello;
-6. attiva il raffreddamento durante il soak;
-7. esegue il soak termico;
-8. attende che l'ugello scenda alla temperatura richiesta prima del QGL;
-9. esegue QGL;
-10. esegue nuovamente homing Z;
-11. genera la bed mesh tramite Klipper Mainline;
-12. disattiva il raffreddamento usato durante il soak;
-13. porta l'ugello alla temperatura finale di stampa;
-14. esegue la purge line;
-15. avvia la stampa.
+2. recupera, quando compatibile, il credito termico già maturato dal sistema Phoenix;
+3. porta l'ugello alla temperatura di preparazione;
+4. esegue homing;
+5. esegue `PHOENIX_CLEAN_NOZZLE`;
+6. spegne il riscaldamento dell'ugello;
+7. attiva il raffreddamento durante l'eventuale soak residuo;
+8. completa soltanto il soak ancora necessario;
+9. attende che l'ugello scenda alla temperatura richiesta prima del QGL;
+10. esegue QGL;
+11. esegue nuovamente homing Z;
+12. genera la bed mesh tramite Klipper Mainline;
+13. disattiva il raffreddamento usato durante il soak;
+14. porta l'ugello alla temperatura finale di stampa;
+15. esegue la purge line;
+16. avvia la stampa.
 
 La bed mesh usa il percorso nativo Klipper con rapid scan e adaptive meshing.
 
@@ -235,10 +322,11 @@ La logica corrente distingue esplicitamente:
 - temperatura target del bed;
 - temperatura di preparazione dell'ugello;
 - soak;
+- credito termico già maturato;
 - raffreddamento dell'ugello prima del QGL;
 - temperatura finale di stampa.
 
-Il comportamento termico non dipende più da variabili o framework DKEU.
+Il comportamento termico non dipende da variabili o framework DKEU. La persistenza introdotta il 25 agosto riguarda soltanto preferenze Phoenix esplicite e utilizza un file dedicato.
 
 ## Funzioni lasciate a Klipper Mainline
 
@@ -287,6 +375,8 @@ mantiene correttamente l'attribuzione a 3DPrintDemon e il relativo riferimento u
 
 Tali attribuzioni devono essere preservate.
 
+Il nuovo Phoenix Automatic Soak è un sistema separato e non deriva la propria logica di stato o persistenza dal timer legacy contenuto in questo file.
+
 ## Stato storico di DKEU
 
 DKEU ha costituito una fase importante dell'evoluzione della configurazione Phoenix ed è mantenuto nella documentazione storica e nelle attribuzioni dove necessario.
@@ -306,6 +396,12 @@ Sono inoltre stati rimossi dalla configurazione attiva:
 
 Il file `~/demon_vars.cfg` può ancora esistere sulla macchina come residuo storico, ma non è utilizzato dal runtime Phoenix.
 
+Dal 25 agosto Phoenix dispone di un proprio `[save_variables]`, indipendente da DKEU, collegato a:
+
+```text
+~/printer_data/config/phoenix_variables.cfg
+```
+
 L'audit finale del 22 agosto 2026 ha prodotto esplicitamente:
 
 ```text
@@ -317,10 +413,10 @@ Pertanto DKEU resta una **origine storica/upstream**, non una dipendenza operati
 
 ## Stato di validazione
 
-Al 23 agosto 2026:
+Baseline consolidata al 23 agosto 2026:
 
 - tutti i pack Phoenix vengono caricati correttamente da Klipper;
-- tutte le 21 macro `PHOENIX_*` correnti risultano esposte;
+- tutte le 21 macro `PHOENIX_*` della baseline risultano esposte;
 - il runtime è strutturalmente indipendente da DKEU;
 - `PHOENIX_START` e `PHOENIX_END` sono stati validati in stampa reale;
 - `PHOENIX_CLEAN_NOZZLE` è stato validato fisicamente;
@@ -330,7 +426,25 @@ Al 23 agosto 2026:
 - `PHOENIX_LOAD_FILAMENT`, `PHOENIX_UNLOAD_FILAMENT`, `PHOENIX_FILAMENT_RUNOUT` e `PHOENIX_FILAMENT_CHANGE` sono stati validati fisicamente;
 - `PHOENIX_PRESSURE_ADVANCE_TEST` è stata rimossa intenzionalmente e non fa più parte del runtime corrente.
 
-La fase di validazione funzionale delle Phoenix Macros può quindi essere considerata sostanzialmente chiusa; eventuali verifiche future riguardano regressioni, modifiche hardware o nuove funzioni.
+### Automatic Soak — validazione del 25 agosto 2026
+
+Verificato finora sulla macchina:
+
+- `save_variables` Phoenix caricato correttamente;
+- `phoenix_variables.cfg` creato e persistente;
+- lettura corretta di `phoenix_soak_autostart` e `phoenix_soak_temperature`;
+- abilitazione dell'autostart senza riscaldamento immediato;
+- avvio automatico del bed dopo restart con target configurato a 70 °C;
+- nessun credito accumulato durante la rampa termica;
+- inizio del credito nella finestra termica prevista;
+- incremento del credito a passi di 10 secondi.
+
+Restano da completare prima di considerare la funzione validata:
+
+- raggiungimento e registrazione di `600/600 s` come `VALID`;
+- caricamento e test delle macro `PHOENIX_SOAK_START` e `PHOENIX_SOAK_STOP`;
+- verifica del nuovo `PHOENIX_SOAK_STATUS` con stati `INACTIVE`, `TRACKING` e `VALID`;
+- test del passaggio del credito parziale/valido a `PHOENIX_START`.
 
 ## Packaging
 
