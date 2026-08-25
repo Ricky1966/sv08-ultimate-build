@@ -245,7 +245,7 @@ Modifiche future o specifiche della macchina possono includere:
 
 - modifiche enclosure;
 - isolamento;
-- redesign umbilical.
+- redesign umbilical: [Phoenix Umbilical Support](hardware/umbilical-support/).
 
 Queste modifiche non devono ridefinire la procedura di migrazione base.
 

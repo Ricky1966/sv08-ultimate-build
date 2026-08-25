@@ -1,0 +1,254 @@
+Spreadsheet cells from Parameters
+Row,Column,Cell,Content,Alias
+1,A,A1,Parameter,
+1,B,B1,Value,
+1,C,C1,Description,
+2,A,A2,WallThickness,
+2,B,B2,5.0 mm,WallThickness
+2,C,C2,Nominal wall thickness,
+3,A,A3,WallRise,
+3,B,B3,50.0 mm,WallRise
+3,C,C3,Rise above original upper level,
+4,A,A4,WireHoleDiameter,
+4,B,B4,1.0 mm,WireHoleDiameter
+4,C,C4,Steel wire hole diameter,
+5,A,A5,WireHolePitch,
+5,B,B5,2.0 mm,WireHolePitch
+5,C,C5,Steel wire hole center pitch,
+6,A,A6,SlotWidth,
+6,B,B6,3.0 mm,SlotWidth
+6,C,C6,Long slot nominal width,
+7,A,A7,GantryBlockLength,
+7,B,B7,82.0 mm,GantryBlockLength
+7,C,C7,Real total gantry mounting block length,
+8,A,A8,GantryBlockFrontWidth,
+8,B,B8,24.0 mm,GantryBlockFrontWidth
+8,C,C8,Width of the front 59 mm section,
+9,A,A9,GantryBlockThickness,
+9,B,B9,10.0 mm,GantryBlockThickness
+9,C,C9,Real gantry mounting block thickness,
+10,A,A10,GantryBlockFrontLength,
+10,B,B10,59.0 mm,GantryBlockFrontLength
+10,C,C10,Length of the narrower front section,
+11,A,A11,GantryBlockRearLength,
+11,B,B11,23.0 mm,GantryBlockRearLength
+11,C,C11,Length of the wider rear section,
+12,A,A12,GantryBlockRearWidth,
+12,B,B12,25.5 mm,GantryBlockRearWidth
+12,C,C12,Width of the wider rear section,
+13,A,A13,GantryBlockLeftOverhang,
+13,B,B13,1.5 mm,GantryBlockLeftOverhang
+13,C,C13,Left-side-only rear overhang,
+14,A,A14,MountingScrewNominalDiameter,
+14,B,B14,4.0 mm,MountingScrewNominalDiameter
+14,C,C14,M4 nominal screw diameter,
+15,A,A15,MountingHoleDiameter,
+15,B,B15,4.5 mm,MountingHoleDiameter
+15,C,C15,Normal clearance diameter for M4,
+16,A,A16,MountingScrewHeadDiameter,
+16,B,B16,7.5 mm,MountingScrewHeadDiameter
+16,C,C16,Measured cylindrical screw head diameter,
+17,A,A17,MountingScrewHeadHeight,
+17,B,B17,4.5 mm,MountingScrewHeadHeight
+17,C,C17,Measured cylindrical screw head height,
+18,A,A18,PrimaryHoleOffsetFromFront,
+18,B,B18,35.0 mm,PrimaryHoleOffsetFromFront
+18,C,C18,Primary hole center distance from edge X=-GantryBlockLength/2,
+19,A,A19,AlternateHoleOffsetFromFront,
+19,B,B19,20.0 mm,AlternateHoleOffsetFromFront
+19,C,C19,Alternate hole center distance from edge X=-GantryBlockLength/2,
+20,A,A20,MountingHoleOffsetFromPositiveY,
+20,B,B20,10.0 mm,MountingHoleOffsetFromPositiveY
+20,C,C20,Both hole centers distance from positive Y edge,
+21,A,A21,MountingHoleSpacing,
+21,B,B21,15.0 mm,MountingHoleSpacing
+21,C,C21,Center distance between mounting holes,
+22,A,A22,GantryProfileNominalSize,
+22,B,B22,20.0 mm,GantryProfileNominalSize
+22,C,C22,Nominal gantry extrusion width,
+23,A,A23,GantryProfileClearance,
+23,B,B23,0.5 mm,GantryProfileClearance
+23,C,C23,Intended assembly clearance,
+24,A,A24,GantryProfileOpening,
+24,B,B24,20.5 mm,GantryProfileOpening
+24,C,C24,Intended internal opening around gantry,
+25,A,A25,GantryRearWallThickness,
+25,B,B25,5.0 mm,GantryRearWallThickness
+25,C,C25,Rear section vertical wall thickness,
+26,A,A26,GantryFrontWallThickness,
+26,B,B26,3.5 mm,GantryFrontWallThickness
+26,C,C26,Front section wall thickness after outer setback,
+27,A,A27,GantryVerticalWallDrop,
+27,B,B27,34.0 mm,GantryVerticalWallDrop
+27,C,C27,Vertical wall extension below Z zero,
+28,A,A28,WallReliefTopDrop,
+28,B,B28,3.75 mm,WallReliefTopDrop
+28,C,C28,Vertical distance below Z zero where the relief diagonal starts,
+29,A,A29,WallReliefRun,
+29,B,B29,28.5 mm,WallReliefRun
+29,C,C29,Horizontal distance from X negative edge to relief diagonal bottom endpoint,
+30,A,A30,GantryCrossWallWidth,
+30,B,B30,5.45 mm,GantryCrossWallWidth
+30,C,C30,Transverse wall width along X,
+31,A,A31,GantryCrossWallDepth,
+31,B,B31,19.6 mm,GantryCrossWallDepth
+31,C,C31,Transverse wall extension toward negative Y,
+32,A,A32,OuterJLowerStepHeight,
+32,B,B32,22.5 mm,OuterJLowerStepHeight
+32,C,C32,Height of lower J step above Z minimum,
+33,A,A33,OuterJUpperRise,
+33,B,B33,40.0 mm,OuterJUpperRise
+33,C,C33,Rise from gantry block top to top arc baseline,
+34,A,A34,OuterJTopRadius,
+34,B,B34,11.5 mm,OuterJTopRadius
+34,C,C34,Radius of outer J semicircular top,
+35,A,A35,OuterJThickness,
+35,B,B35,5.0 mm,OuterJThickness
+35,C,C35,Outer J pad thickness,
+36,A,A36,OuterJArcBaseZ,
+36,B,B36,50.0 mm,OuterJArcBaseZ
+36,C,C36,Global Z coordinate of outer J arc baseline,
+37,A,A37,OuterJArcBaseFromBottom,
+37,B,B37,84.0 mm,OuterJArcBaseFromBottom
+37,C,C37,Height from Z minimum to outer J arc baseline,
+38,A,A38,ChainMountBlockWidthX,
+38,B,B38,30.5 mm,ChainMountBlockWidthX
+38,C,C38,Chain mounting block width along X,
+39,A,A39,ChainMountBlockDepthY,
+39,B,B39,22.6 mm,ChainMountBlockDepthY
+39,C,C39,Chain mounting block depth along Y,
+40,A,A40,ChainMountBlockHeight,
+40,B,B40,15.0 mm,ChainMountBlockHeight
+40,C,C40,Chain mounting block extrusion height toward negative Z,
+41,A,A41,ChainMountBlockTopZ,
+41,B,B41,-11.5 mm,ChainMountBlockTopZ
+41,C,C41,Global top Z coordinate of chain mounting block,
+42,A,A42,UpperLFlangeThickness,
+42,B,B42,5.62 mm,UpperLFlangeThickness
+42,C,C42,Upper L horizontal flange thickness along Y,
+43,A,A43,UpperLHeight,
+43,B,B43,38.0 mm,UpperLHeight
+43,C,C43,Upper L vertical extrusion height above gantry block,
+44,A,A44,UpperLTopZ,
+44,B,B44,48.0 mm,UpperLTopZ
+44,C,C44,Global top Z coordinate of Upper L,
+45,A,A45,OuterJTopZ,
+45,B,B45,61.5 mm,OuterJTopZ
+45,C,C45,Nominal top Z coordinate of outer J,
+46,A,A46,OuterJCenterX,
+46,B,B46,29.5 mm,OuterJCenterX
+46,C,C46,Center X coordinate of outer J rounded top,
+47,A,A47,OuterJCenterY,
+47,B,B47,-35.6 mm,OuterJCenterY
+47,C,C47,Center Y coordinate through outer J thickness,
+48,A,A48,OuterJLowerArmThickness,
+48,B,B48,3.5 mm,OuterJLowerArmThickness
+48,C,C48,Final uniform thickness of outer J lower free arm,
+49,A,A49,OuterJLowerArmReliefDepth,
+49,B,B49,1.5 mm,OuterJLowerArmReliefDepth
+49,C,C49,Material removed from inner side of outer J lower arm,
+50,A,A50,OuterJLowerArmRun,
+50,B,B50,30.5 mm,OuterJLowerArmRun
+50,C,C50,Length of reduced-thickness outer J lower arm,
+51,A,A51,UmbilicalCradleInnerDiameter,
+51,B,B51,10.0 mm,UmbilicalCradleInnerDiameter
+51,C,C51,Umbilical cable cradle internal diameter,
+52,A,A52,UmbilicalCradleWallThickness,
+52,B,B52,3.0 mm,UmbilicalCradleWallThickness
+52,C,C52,Umbilical cable cradle wall thickness,
+53,A,A53,UmbilicalCradleHeight,
+53,B,B53,59.5 mm,UmbilicalCradleHeight
+53,C,C53,Umbilical cable cradle extrusion height,
+54,A,A54,UmbilicalCradleStraightRun,
+54,B,B54,9.55 mm,UmbilicalCradleStraightRun
+54,C,C54,Straight run from support wall to cradle arc center,
+55,A,A55,UmbilicalCradleRootFilletRadius,
+55,B,B55,1.25 mm,UmbilicalCradleRootFilletRadius
+55,C,C55,Root fillet radius for umbilical cradle walls,
+56,A,A56,UmbilicalCradleBendRadius,
+56,B,B56,15.0 mm,UmbilicalCradleBendRadius
+56,C,C56,Umbilical cable cradle bend centerline radius,
+57,A,A57,UmbilicalBendPlaneDrop,
+57,B,B57,3.0 mm,UmbilicalBendPlaneDrop
+57,C,C57,Downward offset of the 45 degree umbilical bend plane,
+58,A,A58,UmbilicalBendCylinderLength,
+58,B,B58,18.0 mm,UmbilicalBendCylinderLength
+58,C,C58,Length of the 45 degree subtractive umbilical cylinder,
+59,A,A59,UmbilicalBendCylinderDiameter,
+59,B,B59,12.0 mm,UmbilicalBendCylinderDiameter
+59,C,C59,Diameter of the 45 degree subtractive umbilical cylinder,
+60,A,A60,ChainMountM3HoleDiameter,
+60,B,B60,2.55 mm,ChainMountM3HoleDiameter
+60,C,C60,Pilot diameter for M3 chain mount holes,
+61,A,A61,ChainMountM3PrimaryOffset,
+61,B,B61,16.56 mm,ChainMountM3PrimaryOffset
+61,C,C61,Primary chain mount M3 hole offset from outer edge opposite cradle,
+62,A,A62,ChainMountM3RowOffset,
+62,B,B62,4.0 mm,ChainMountM3RowOffset
+62,C,C62,Row offset for lower pair of chain mount M3 holes,
+63,A,A63,ChainMountM3LowerSpacing,
+63,B,B63,10.0 mm,ChainMountM3LowerSpacing
+63,C,C63,Center spacing of lower pair of chain mount M3 holes,
+64,A,A64,ExternalEdgeChamferSize,
+64,B,B64,0.8 mm,ExternalEdgeChamferSize
+64,C,C64,Chamfer size for selected external safe edges,
+65,A,A65,Sketch003 world Z maximum baseline,
+65,B,B65,48.0 mm,ManualSketch003WorldZMax
+66,A,A66,Phase1 manual Pocket length,
+66,B,B66,5.1 mm,ManualPocketLength
+67,A,A67,Phase1 manual Pocket001 length,
+67,B,B67,83.0 mm,ManualPocket001Length
+68,A,A68,Phase1 manual Pocket002 length,
+68,B,B68,5.0 mm,ManualPocket002Length
+69,A,A69,Phase1 manual Pocket003 length,
+69,B,B69,17.0 mm,ManualPocket003Length
+70,A,A70,Phase1 manual Pad length,
+70,B,B70,1.6 mm,ManualPadLength
+71,A,A71,Phase1 Fillet radius,
+71,B,B71,11.0 mm,ManualFilletRadius
+72,A,A72,Phase1 Fillet001 radius,
+72,B,B72,17.0 mm,ManualFillet001Radius
+73,A,A73,Phase1 Fillet002 radius,
+73,B,B73,3.0 mm,ManualFillet002Radius
+74,A,A74,Phase1 Fillet003 radius,
+74,B,B74,3.0 mm,ManualFillet003Radius
+75,A,A75,Phase1 Fillet004 radius,
+75,B,B75,2.0 mm,ManualFillet004Radius
+76,A,A76,Phase1 Fillet005 radius,
+76,B,B76,3.0 mm,ManualFillet005Radius
+77,A,A77,Phase1 Fillet006 radius,
+77,B,B77,2.0 mm,ManualFillet006Radius
+78,A,A78,Sketch001 local X minimum,
+78,B,B78,-12.12670071 mm,ManualSketch001XMin
+79,A,A79,Sketch001 local X maximum,
+79,B,B79,8.0 mm,ManualSketch001XMax
+80,A,A80,Sketch001 local Y minimum,
+80,B,B80,2.12132034 mm,ManualSketch001YMin
+81,A,A81,Sketch001 local Y maximum,
+81,B,B81,24.72687085 mm,ManualSketch001YMax
+82,A,A82,Sketch002 local X minimum baseline,
+82,B,B82,-15.42 mm,ManualSketch002XMin
+83,A,A83,Sketch002 local X maximum baseline,
+83,B,B83,9.7 mm,ManualSketch002XMax
+84,A,A84,Sketch002 local Y minimum baseline,
+84,B,B84,-3.32867966 mm,ManualSketch002YMin
+85,A,A85,Sketch002 local Y maximum baseline,
+85,B,B85,19.67132034 mm,ManualSketch002YMax
+86,A,A86,Sketch003 world X minimum baseline,
+86,B,B86,-12.5 mm,ManualSketch003WorldXMin
+87,A,A87,Sketch003 world X maximum baseline,
+87,B,B87,23.45 mm,ManualSketch003WorldXMax
+196,A,A196,Sketch003 world Z minimum baseline,
+196,B,B196,-26.5 mm,ManualSketch003WorldZMin
+
+Extra parameter-like properties on Parameters object
+Property,Value,Type,Group,Status
+LCornerHoleA_X,20.725,App::PropertyFloat,LCornerHoles,21
+LCornerHoleA_Y,-23.3,App::PropertyFloat,LCornerHoles,21
+LCornerHoleB_X,29.5,App::PropertyFloat,LCornerHoles,21
+LCornerHoleB_Y,-10.69,App::PropertyFloat,LCornerHoles,21
+LCornerHoleC_X,20.725,App::PropertyFloat,LCornerHoles,21
+LCornerHoleC_Y,-15.3,App::PropertyFloat,LCornerHoles,21
+LCornerHoleD_X,21.5,App::PropertyFloat,LCornerHoles,21
+LCornerHoleD_Y,-10.69,App::PropertyFloat,LCornerHoles,21
+LCornerHoleDiameter,1.2,App::PropertyFloat,LCornerHoles,21
