@@ -28,7 +28,7 @@ The verified Phoenix baseline includes:
 - 5 new user-facing Phoenix Automatic Soak macros added on August 25 and currently under validation;
 - Klipper restarted without configuration, Jinja, or runtime errors during structural pack validation.
 
-Phoenix now uses `save_variables` exclusively for persistent user preferences belonging to its Automatic Soak system, through a dedicated Phoenix file. The old `~/demon_vars.cfg` is not reused.
+Phoenix now uses `save_variables` for persistent user preferences and persistent thermal state belonging to its Automatic Soak system, through a dedicated Phoenix file. The old `~/demon_vars.cfg` is not reused.
 
 This confirms the **structural/runtime independence** of Phoenix Macros from DKEU. Physical validation of individual macros is performed separately on the machine and must not be confused with successful loading by Klipper alone.
 
@@ -97,7 +97,7 @@ M600 -> PHOENIX_FILAMENT_CHANGE
 FILAMENT_CHANGE -> PHOENIX_FILAMENT_CHANGE
 ```
 
-### Automatic Soak
+### Persistent Automatic Soak
 
 Added on August 25, 2026 and currently under functional validation.
 
@@ -109,11 +109,13 @@ User-facing macros:
 - `PHOENIX_SOAK_STOP`
 - `PHOENIX_SOAK_STATUS`
 
-The system uses two persistent preferences:
+The system uses four persistent variables:
 
 ```text
 phoenix_soak_autostart
 phoenix_soak_temperature
+phoenix_soak_credit
+phoenix_soak_timestamp
 ```
 
 stored through:
@@ -123,32 +125,91 @@ stored through:
 filename: ~/printer_data/config/phoenix_variables.cfg
 ```
 
+`phoenix_soak_credit` represents the number of seconds of valid thermal history accumulated by the bed; `phoenix_soak_timestamp` stores the Unix timestamp of the latest persisted credit update.
+
+To make an absolute clock available to macros across Klipper restarts, Phoenix also uses the small Klipper helper:
+
+```text
+phoenix_clock.py
+[phoenix_clock]
+```
+
+which exposes to Jinja:
+
+```text
+printer.phoenix_clock.epoch
+```
+
 The historical `~/demon_vars.cfg` file is not used by the Phoenix system.
 
 #### Automatic startup
 
 When `phoenix_soak_autostart` is enabled, a few seconds after Klipper starts Phoenix:
 
-1. reads the configured temperature;
-2. sets the bed target;
-3. explicitly reports in the console that Automatic Soak has started;
-4. waits for the bed to enter the useful temperature window;
-5. begins accumulating thermal credit;
-6. records the soak as valid when the required credit is complete.
+1. reads the persistent temperature, credit, and timestamp;
+2. calculates elapsed time since the latest timestamp;
+3. subtracts that elapsed time from previously recorded credit;
+4. checks the actual bed temperature;
+5. invalidates historical credit if the bed has dropped beyond the allowed thermal threshold;
+6. sets the bed target;
+7. waits for the bed to return to the useful temperature window;
+8. applies a 60-second safety guard whenever recovered credit exists;
+9. continues accumulating thermal credit;
+10. periodically persists credit and timestamp.
 
-The timer does **not** start during the heating ramp. With a 70 °C target, credit begins when the bed reaches roughly 69 °C.
+Time spent while the machine is off **does not create credit**: it is subtracted from the previously stored credit.
 
-The current soak baseline is 600 seconds, meaning 10 effective minutes inside the expected thermal window.
+Example:
 
-#### Thermal state and credit
+```text
+saved credit: 120 s
+elapsed time since timestamp: 15 s
+recovered credit: 105 s
+```
 
-The system reuses the existing Phoenix state:
+On August 25 this exact case was verified with a real `FIRMWARE_RESTART`: Phoenix reported `recovered 105 s after 15 s offline`.
+
+#### Thermal window
+
+Credit does not increase during the initial heating ramp. With a 70 °C target, counting advances when the bed is at least roughly 69 °C.
+
+If the bed drops more than 6 °C below the reference temperature, the previous thermal history is no longer considered trustworthy and credit is reset.
+
+The minimum baseline for a complete soak is 600 seconds, meaning 10 effective minutes inside the expected thermal window.
+
+Credit, however, is **not capped at 600 seconds**: it continues to represent the real duration of the thermal state. A bed held at soak temperature for one hour may therefore record roughly 3600 seconds of credit. This allows short restarts to preserve a long stabilization that has already occurred.
+
+#### 60-second recovery guard
+
+When previous credit is recovered across a restart, Phoenix does not immediately consider it valid. The bed is first returned to target temperature and must then spend at least another 60 seconds inside the useful thermal window.
+
+The guard does not replace the 600-second minimum requirement. For example, 105 seconds of recovered credit is still insufficient after the safety minute: the system remains in `TRACKING` until the minimum required threshold is reached.
+
+Real August 25 test:
+
+```text
+recovered: 105 s
+intermediate status: credit 145 s | recovery guard 20 s
+next status: credit 195 s | recovery guard 0 s
+```
+
+The observed behavior matches the intended model.
+
+#### Persistence and write frequency
+
+The runtime watcher operates at 10-second intervals, while `phoenix_soak_credit` and `phoenix_soak_timestamp` are written to disk every 60 seconds. This avoids unnecessarily frequent storage writes while keeping the worst-case loss after an abrupt shutdown conservatively around one minute.
+
+Tracking continues during print preparation and printing while the bed remains in the expected thermal condition. Credit and timestamp therefore represent the actual thermal history of the bed, not just the pre-print stage.
+
+#### Runtime thermal state
+
+The system keeps compatibility with the existing Phoenix state:
 
 ```text
 _PHOENIX_THERMAL_STATE
 ```
 
-including runtime variables such as:
+with runtime variables such as:
 
 ```text
 soak_valid
@@ -157,7 +218,21 @@ soak_total_seconds
 thermal_credit_seconds
 ```
 
-The user's preference is persistent; the thermal validity of the soak itself is **not** stored permanently across power cycles.
+The new engine also maintains its operational state in:
+
+```text
+_PHOENIX_SOAK_AUTOSTART_STATE
+```
+
+including:
+
+```text
+active
+target
+credit_seconds
+recovery_guard_seconds
+persist_counter
+```
 
 `PHOENIX_SOAK_STATUS` reports:
 
@@ -165,20 +240,45 @@ The user's preference is persistent; the thermal validity of the soak itself is 
 - `INACTIVE`, `TRACKING`, or `VALID` status;
 - configured temperature;
 - actual and target bed temperature;
-- accumulated thermal credit.
+- current thermal credit;
+- any remaining recovery guard.
 
-`PHOENIX_SOAK_STOP` stops the current soak and turns off the bed without changing the persistent autostart preference.
+`PHOENIX_SOAK_STOP` stops the current soak and turns off the bed without changing the persistent autostart preference; before stopping, it saves the current thermal history.
 
 `PHOENIX_SOAK_START` allows manual startup using the persistent temperature or a temporary `BED_TEMP` override.
 
 #### Integration with `PHOENIX_START`
 
-The integration logic allows `PHOENIX_START` to consume:
+Soak is now an **autonomous machine phase**, separate from print preparation.
 
-- a soak that is already fully valid;
-- or partial credit accumulated by an Automatic Soak that is still running.
+`PHOENIX_START` executes two distinct phases:
 
-This prevents a print started after several minutes of preheating from necessarily repeating the entire soak from zero.
+**Phase 1 — bed thermal state**
+
+1. reads thermal credit compatible with the requested target;
+2. brings the bed to the requested temperature;
+3. completes only any remaining soak time;
+4. satisfies any recovery guard;
+5. records the thermal state as valid.
+
+The nozzle is not used to build soak time during this phase.
+
+**Phase 2 — print preparation**
+
+Only after the bed has satisfied the requested thermal state:
+
+1. brings the nozzle to preparation temperature;
+2. homes;
+3. runs `PHOENIX_CLEAN_NOZZLE`;
+4. cools the nozzle before QGL/mesh;
+5. runs QGL;
+6. homes Z again;
+7. generates the adaptive bed mesh through Klipper Mainline;
+8. brings the nozzle to final print temperature;
+9. runs the purge line;
+10. starts the print.
+
+This separation prevents cleaner activity, nozzle heating, or nozzle cooling from being artificially included in soak time.
 
 ### Calibration Pack
 
@@ -212,26 +312,25 @@ This is a manual helper that moves the toolhead to candidate cleaner coordinates
 
 ## `PHOENIX_START`
 
-Manages the print-start workflow validated on Phoenix.
+Manages the Phoenix print-start workflow.
 
-Current sequence:
+The current sequence is now explicitly split between bed thermal state and print preparation:
 
-1. set the bed target temperature;
-2. recover compatible thermal credit already accumulated by the Phoenix system;
-3. bring the nozzle to preparation temperature;
-4. home;
-5. run `PHOENIX_CLEAN_NOZZLE`;
-6. turn off nozzle heating;
-7. enable cooling during any remaining soak;
-8. complete only the remaining soak time;
-9. wait for the nozzle to cool to the required temperature before QGL;
+1. set the bed target;
+2. use any compatible thermal credit already available;
+3. wait only for any remaining soak requirement;
+4. mark the soak as valid;
+5. only then bring the nozzle to preparation temperature;
+6. home;
+7. run `PHOENIX_CLEAN_NOZZLE`;
+8. turn off nozzle heating and cool it;
+9. wait for nozzle <= 50 °C;
 10. run QGL;
 11. home Z again;
 12. generate the bed mesh through Klipper Mainline;
-13. disable the cooling used during soak;
-14. bring the nozzle to final print temperature;
-15. run the purge line;
-16. start the print.
+13. bring the nozzle to final print temperature;
+14. run the purge line;
+15. start the print.
 
 The bed mesh uses the native Klipper path with rapid scan and adaptive meshing.
 
@@ -244,6 +343,8 @@ Handles print completion according to the Phoenix workflow.
 The macro belongs to the Phoenix layer and replaces the earlier DKEU end-print macros.
 
 `M84` is not executed.
+
+The new persistent soak watcher is not restarted by `PHOENIX_END`: it remains autonomous and continues to represent bed thermal history when applicable.
 
 ## `PHOENIX_CLEAN_NOZZLE`
 
@@ -313,22 +414,18 @@ TURN_OFF_HEATERS
 
 ## Thermal management
 
-The print-start thermal sequence is managed by the Phoenix workflow and the internal macro:
-
-```text
-_PHOENIX_THERMAL_STATE
-```
-
-The current logic explicitly distinguishes:
+Phoenix thermal management now explicitly distinguishes:
 
 - bed target temperature;
+- persistent thermal credit;
+- absolute timestamp of the latest valid persistence update;
+- credit decay across restarts;
+- 60-second recovery guard;
 - nozzle preparation temperature;
-- soak;
-- thermal credit already accumulated;
 - nozzle cooling before QGL;
 - final print temperature.
 
-Thermal behavior does not depend on DKEU variables or frameworks. Persistence introduced on August 25 concerns only explicit Phoenix user preferences and uses a dedicated file.
+Thermal behavior does not depend on DKEU variables or frameworks. Persistence and clock support introduced on August 25 belong exclusively to the Phoenix layer.
 
 ## Functions left to Klipper Mainline
 
@@ -434,19 +531,23 @@ Verified so far on the machine:
 
 - Phoenix `save_variables` loaded correctly;
 - `phoenix_variables.cfg` created and persistent;
-- correct reading of `phoenix_soak_autostart` and `phoenix_soak_temperature`;
-- autostart preference can be enabled without immediate heating;
-- automatic bed heating starts after restart with configured 70 °C target;
-- no credit is accumulated during the thermal ramp;
-- credit begins in the expected temperature window;
-- credit increments in 10-second steps.
+- `phoenix_clock` helper loaded and Unix epoch readable from Jinja;
+- correct reading of `phoenix_soak_autostart`, `phoenix_soak_temperature`, `phoenix_soak_credit`, and `phoenix_soak_timestamp`;
+- automatic bed startup with configured 70 °C target;
+- no credit accumulated during the thermal ramp;
+- credit increments in 10-second steps inside the useful thermal window;
+- credit and timestamp persisted every 60 seconds;
+- real recovery after `FIRMWARE_RESTART`: 120 s saved, 15 s elapsed, 105 s recovered;
+- real application of the 60-second recovery guard;
+- observed guard countdown from 60 to 20 to 0 while credit continued to increase;
+- state correctly remained `TRACKING` after guard completion while credit was still below 600 s;
+- separation of soak from nozzle preparation in `PHOENIX_START` implemented and loaded.
 
-Still to be completed before considering the function validated:
+Still to be completed before considering the new system fully validated:
 
-- reaching and recording `600/600 s` as `VALID`;
-- loading and testing `PHOENIX_SOAK_START` and `PHOENIX_SOAK_STOP`;
-- validating the new `PHOENIX_SOAK_STATUS` states `INACTIVE`, `TRACKING`, and `VALID`;
-- testing transfer of partial/valid credit into `PHOENIX_START`.
+- observe the new persistent engine reach `VALID` with credit >= 600 s;
+- complete a full physical test of the new `PHOENIX_START` sequence after the bed-only/print-preparation separation;
+- operationally test `PHOENIX_SOAK_START` and `PHOENIX_SOAK_STOP` with the final persistent engine.
 
 ## Packaging
 
