@@ -2,7 +2,7 @@
 
 Data della migrazione documentata: **2026-08-17**
 
-Ultima revisione del documento: **2026-08-23**.
+Ultima revisione del documento: **2026-09-02**.
 
 ## Come leggere questa pagina
 
@@ -50,6 +50,52 @@ spi_software_mosi_pin: extruder_mcu:PB15
 spi_software_miso_pin: extruder_mcu:PB14
 axes_map: x,z,y
 ```
+
+## Hotend Zero — sensore PT1000 e curva ADC Sovol
+
+L'hotend della **Sovol Zero utilizza un sensore PT1000**. La configurazione ufficiale Sovol Zero non usa però il profilo generico `sensor_type: PT1000`: definisce una curva ADC custom, associata al circuito reale della toolboard Zero.
+
+Phoenix mantiene intenzionalmente **la stessa curva della configurazione ufficiale `Sovol3d/SOVOL-ZERO`**:
+
+```ini
+[adc_temperature sovol_zero_pt1000]
+temperature1: 25
+resistance1: 1268.60
+temperature2: 180
+resistance2: 1920.98
+temperature3: 300
+resistance3: 2398.52
+```
+
+La configurazione dell'extruder usa:
+
+```ini
+sensor_type: sovol_zero_pt1000
+pullup_resistor: 11500
+sensor_pin: extruder_mcu:PA5
+```
+
+Il nome Phoenix `sovol_zero_pt1000` sostituisce il nome generico Sovol `my_thermistor_e` **senza modificare alcun valore della curva**. La rinomina serve soltanto a rendere esplicito il tipo di sensore e a evitare che venga confuso con un NTC 100K.
+
+Non sostituire automaticamente questa definizione con un generico `sensor_type: PT1000`: sulla Zero va conservata la curva ADC fornita da Sovol insieme al `pullup_resistor: 11500` e al pin `extruder_mcu:PA5`, salvo una modifica hardware consapevole e verificata.
+
+### PID hotend
+
+Dopo aver verificato la configurazione del PT1000, il PID dell'hotend deve essere ricalibrato sulla macchina reale. Sulla Phoenix la calibrazione del **2026-09-02** è stata eseguita a **220 °C** con:
+
+```text
+PID_CALIBRATE HEATER=extruder TARGET=220
+```
+
+Risultato validato:
+
+```ini
+pid_Kp: 37.717
+pid_Ki: 6.133
+pid_Kd: 57.990
+```
+
+Questi PID descrivono la Phoenix attuale e **non sono una baseline universale**. Dopo sostituzione di hotend, heater, sensore, modifica del circuito di lettura o altra variazione significativa del sistema termico, eseguire nuovamente `PID_CALIBRATE` al target operativo appropriato e salvare i nuovi valori nella configurazione attiva.
 
 ## Eddy integrato nella Zero
 
