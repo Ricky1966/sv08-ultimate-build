@@ -4,7 +4,7 @@
 
 Migration date documented here: **2026-08-17**
 
-Last document review: **2026-08-23**.
+Last document review: **2026-09-02**.
 
 ## How to read this page
 
@@ -52,6 +52,52 @@ spi_software_mosi_pin: extruder_mcu:PB15
 spi_software_miso_pin: extruder_mcu:PB14
 axes_map: x,z,y
 ```
+
+## Zero hotend — PT1000 sensor and Sovol ADC curve
+
+The **Sovol Zero hotend uses a PT1000 sensor**. However, the official Sovol Zero configuration does not use the generic `sensor_type: PT1000` profile: it defines a custom ADC curve matched to the actual Zero toolboard measurement circuit.
+
+Phoenix intentionally keeps **the same curve used by the official `Sovol3d/SOVOL-ZERO` configuration**:
+
+```ini
+[adc_temperature sovol_zero_pt1000]
+temperature1: 25
+resistance1: 1268.60
+temperature2: 180
+resistance2: 1920.98
+temperature3: 300
+resistance3: 2398.52
+```
+
+The extruder configuration uses:
+
+```ini
+sensor_type: sovol_zero_pt1000
+pullup_resistor: 11500
+sensor_pin: extruder_mcu:PA5
+```
+
+The Phoenix name `sovol_zero_pt1000` replaces Sovol's generic `my_thermistor_e` name **without changing any curve value**. The rename exists only to make the sensor type explicit and to prevent confusion with a 100K NTC thermistor.
+
+Do not automatically replace this definition with a generic `sensor_type: PT1000`. On the Zero, keep the Sovol-provided ADC curve together with `pullup_resistor: 11500` and `extruder_mcu:PA5`, unless the hardware is deliberately changed and revalidated.
+
+### Hotend PID
+
+After verifying the PT1000 configuration, hotend PID must be recalibrated on the actual machine. On Phoenix, the **2026-09-02** calibration was run at **220 °C** using:
+
+```text
+PID_CALIBRATE HEATER=extruder TARGET=220
+```
+
+Validated result:
+
+```ini
+pid_Kp: 37.717
+pid_Ki: 6.133
+pid_Kd: 57.990
+```
+
+These PID values describe the current Phoenix machine and **are not a universal baseline**. After replacing the hotend, heater, sensor, changing the measurement circuit, or making another significant thermal-system change, run `PID_CALIBRATE` again at an appropriate operating target and store the new values in the active configuration.
 
 ## Eddy integrated into the Zero
 
@@ -266,7 +312,6 @@ After restart, Phoenix returned to `Ready`.
 - `/home/biqu/klipper/klippy/extras/ldc1612-before-zero-250hz-20260817.py`
 - `/home/biqu/printer_data/config/phoenix-zero-toolhead-before-divider3-20260817.cfg`
 - `/home/biqu/printer_data/config/printer-before-zero-eddy-divider3-save-20260817.cfg`
-- `/home/biqu/printer_data/config/printer-before-mesh-overshoot-zero-20260817.cfg`
 - `/home/biqu/printer_data/config/printer-before-zero-graphite-mesh-save-20260817.cfg`
 
 ## State verified at the end of the August 17 session
